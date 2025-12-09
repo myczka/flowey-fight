@@ -10,7 +10,6 @@
 
 std::string audioDir = "";
 
-
 void seekTo(ma_sound &sound, float seconds) {
     ma_uint64 totalFrames;
     ma_uint64 targetFrame;
