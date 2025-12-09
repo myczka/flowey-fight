@@ -10,5 +10,8 @@ target_include_directories(floweyfight SYSTEM PRIVATE ./lib/cppLibrary)
 # Link system libraries (Windows)
 #target_link_libraries(floweyfight PRIVATE opengl3)
 
-## user32 and gdi32 are linked automatically by Windows toolchain normally, but ensure:
+# user32 and gdi32 are linked automatically by Windows toolchain normally, but ensure:
 target_link_libraries(floweyfight PRIVATE user32 gdi32)
+
+# Blocks *conversion from size_t to int potential loss of data* compiler warning
+target_compile_options(floweyfight PRIVATE /wd4267) 

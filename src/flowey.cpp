@@ -616,7 +616,7 @@ int main(int argc, char **argv) {
         sleep(500);
         battle_menu.setPrompt(name + "  HP " + to_string(health) + "/600");
         battle_menu.display();
-        waitTill(genius_evil, 34.2);
+        waitTill(genius_evil, 34.2f);
         clear();
 
         battleMenuVec.erase(battleMenuVec.begin());
@@ -652,7 +652,8 @@ int main(int argc, char **argv) {
     sleep(1430);
     clear(); 
     uninit(fight);
-debug:
+
+//debug:
     flow("Ready?\n", 50);
     sleep(100);
     chara(" Yes   No\n", 65);
@@ -673,8 +674,8 @@ debug:
 
     init_sound(mainEng, fight, "Axel Fania_v1.wav");
     loop(fight);
-    volume(fight, .7);
-    beginAt(fight, 14.7);
+    volume(fight, 0.7f);
+    beginAt(fight, 14.7f);
     type("* Flowey Attacks!\n", 25);
     sleep(335);
     clear();
