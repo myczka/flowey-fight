@@ -497,12 +497,12 @@ int main(int argc, char **argv) {
     pitch(ok_sound, .5);
     pitch(fallen_down, 0.75);
     
-    volume(fallen_down, .6);
-    volume(effectEng, 0.8);
-    volume(voiceEng, .38);
-    volume(buffVoiceEng, 1.2);
+    volume(fallen_down, 0.6f);
+    volume(effectEng, 0.8f);
+    volume(voiceEng, 0.38f);
+    volume(buffVoiceEng, 1.2f);
     volume(good_song, 1);
-    volume(fight, .80);
+    volume(fight, 0.80f);
     volume(genius_evil, .5);
 
     loop(fallen_down);
@@ -575,8 +575,8 @@ int main(int argc, char **argv) {
         init_sound(mainEng, good_song, "Dm9_G7_CM7_Am7.wav");
         play(good_song);
         loop(good_song);
-        pitch(good_song, .9);
-        volume(good_song, .8);
+        pitch(good_song, 0.9f);
+        volume(good_song, 0.8f);
         clear();
         goto fight_start; 
     }
