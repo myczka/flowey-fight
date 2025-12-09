@@ -372,6 +372,7 @@ start_turn:
     sleep(400);
 }
 
+//TODO: Make defend function to check for defend
 void flowey_turn() {
     int random_number_three;
     
