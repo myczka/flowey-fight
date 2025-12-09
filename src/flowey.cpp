@@ -373,7 +373,7 @@ start_turn:
 void flowey_turn() {
     int random_number_three;
     
-    srand(time(0));
+    srand(static_cast<unsigned int>(time(0)));
 
     if (turn > 1) {
         random_number_three = rand() % 80;
