@@ -43,6 +43,7 @@ void write(std::string yeet, int time, ma_engine &engine,
 void num_enter(char select, ma_sound &sound) {
   char choice;
   std::cout << std::endl;
+  std::cout << ">";
   do {
     choice = _getch();
   } while (choice != select);

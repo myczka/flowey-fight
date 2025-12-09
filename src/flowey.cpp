@@ -12,9 +12,11 @@ Copyright (c) 2022-2025 Jordan Myczka. All rights reserved.
 #include <string>
 #include <vector>
 
+// All encoded audio files
 
 using namespace std;
 
+string audioDir = "./audio/";
 
 int tens = 0;
 int hundreds = 8;
@@ -732,6 +734,7 @@ std::string getBattleStr() {
 }
 
 void ok() {
+   
     num_enter('z', ok_sound);
 }
 

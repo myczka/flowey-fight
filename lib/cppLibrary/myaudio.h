@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 
-std::string audioDir = "";
+extern std::string audioDir;
 
 void seekTo(ma_sound &sound, float seconds) {
     ma_uint64 totalFrames;
