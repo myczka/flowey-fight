@@ -69,7 +69,7 @@ ma_sound genius_evil;
 
 std::string getBattleStr();
 
-// Main Menu
+// Root Menu
 Menu battle_menu(getBattleStr(), battleMenuVec, '>', true);
 int bMenuSize = battleMenuVec.size();
 
@@ -105,6 +105,7 @@ void playEnemyHurt();
 
 void playRand(std::vector<std::string> soundsNames);
 
+// This function removes the amount passed from the players health
 void get_health(int remove) {
     remove = remove - damageMod;
     int emphasis = 0;
@@ -140,82 +141,18 @@ void get_health(int remove) {
     }
 }
 
+// This function serves to print out floweys health decreasing over time and ends up reducing it by the value passed.
 void get_flowey(int remove) {
-    string hpDisplay = "Flowey's HP " + flowey;
-    hpDisplay = hpDisplay + "/800";
-    int length;
     int goal = flowey - remove;
-    //string flowStr = to_string(remove);
-    //int length = to_string(remove).length();
-    //int tensRemove = int(flowStr[length - 1]);
-    //int hundredsRemove = 0;
+    int length;
+
+    // Initial health printout and damage sfx
     playSound(effectEng, "slash.wav");
     type("Flowey's HP " + to_string(flowey) + "/800");
     sleep(400);
     backspace(4);
 
-    //if (length == 3) {
-
-    //}
-    //else {
-    //    if (tens - 2 > -1) {
-
-    //        tens = tens - 7;
-
-    //        for (int a = 9; a > -1; a--) {
-    //            sleep(80);
-    //            cout << "\b\b";
-    //            playRand(mttTexts);
-    //            cout << a << "9";
-    //            if (a == tens) {
-    //                break;
-    //            }
-    //        }
-    //        for (int i = 8; i > -1; i--) {
-    //            sleep(140);
-    //            cout << "\b";
-    //            playRand(mttTexts);
-    //            cout << i;
-    //        }
-    //        playEnemyHurt();
-    //        type("/800");
-    //        flowey = flowey - 70;
-    //    }
-    //    else {
-    //        hundreds = hundreds - 1;
-    //        sleep(60);
-    //        cout << "\b\b\b";
-    //        //sleep(100);
-    //        playRand(mttTexts);
-    //        cout << hundreds << "99";
-
-    //        tens = (tens - 7) + 10;
-
-    //        for (int a = 9; a > -1; a--) {
-    //            sleep(110);
-    //            cout << "\b\b";
-    //            //sleep(100);
-    //            playRand(mttTexts);
-    //            cout << a << "9";
-    //            if (a == tens) {
-    //                break;
-    //            }
-    //        }
-    //        for (int i = 8; i > -1; i--) {
-    //            sleep(170);
-    //            cout << "\b";
-
-    //            playRand(mttTexts);
-    //            cout << i;
-    //        }
-    //        playEnemyHurt();
-    //        sleep(40);
-    //        std::cout << "/800";
-    //        flowey = flowey - 70;
-    //    }
-    //    sleep(400);
-    //    clear();
-
+    // Ticks down the tens place and hundreds place
     while (flowey != goal + 10) {
         flowey -= 10;
         length = to_string(flowey).length();
@@ -225,6 +162,7 @@ void get_flowey(int remove) {
         sleep(70);
     }
 
+    // Ticks down the ones place
     for (int i = 0; i < 10; i++) {
         length = to_string(flowey).length();
         flowey -= 1;
@@ -234,11 +172,10 @@ void get_flowey(int remove) {
         sleep(100);
     }
     playEnemyHurt();
+}  
 
-    }  
-
+// Player's Turn Sequence
 void player_turn() {
-
     battle_menu.setPrompt(getBattleStr());
     bMenuSize = battleMenuVec.size();
     
@@ -296,27 +233,25 @@ start_turn:
             items.erase(items.begin() + num);
         } 
         else if (items.at(num) == "Candy Bar") {
+            health += 100;
+            damageMod += 150;
             chara("* Ate a Candy Bar.");
             ok();
             type("* Defense increased!\n");
             type("* Gained 100 HP!");
             ok();
-            health += 100;
-            damageMod += 150;
-            items.erase(items.begin() + num); 
+            items.erase(items.begin() + num);
         }
         else {
             goto start_turn;
         }
 
-        //SOLVES: Trying to set empty vector for options
+        // Sets items vector to empty to fix issue passing empty vec to setOptions and to inform player that all items have been used.
         if (items.empty()) {
             items.push_back("Empty");
         }
 
         item_menu.setOptions(items);
-        
-   
     }
     else if (num == bMenuSize - 1) {
         num = mercy_menu.select();
@@ -348,7 +283,7 @@ start_turn:
                 wolf("Like I'd let you run away you coward...");
                 sleep(1000);
                 clear();
-            }
+            } 
             else {
                 num = get_rand(0, 1);
                 if (num == 1) {
@@ -363,7 +298,6 @@ start_turn:
         }
         else {
             goto start_turn;
-            
         }
     }
     else {
@@ -430,6 +364,7 @@ void flowey_turn() {
             sleep(80);
             type("* Flowey erased you!!!\n");
             if (!defend) {
+                // TODO: Mute mainEng
                 type("9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999", 1);
                 exit(0);
             }
@@ -699,6 +634,7 @@ player_turn:
 
     }
     
+    // TODO: Doesn't change dialogue for Flowey dead
     sleep(360);
     clear();
     flow("* What will you do?\n");
