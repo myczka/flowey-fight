@@ -68,6 +68,9 @@ ma_sound fallen_down;
 ma_sound genius_evil;
 
 // Root Menu
+// Function to get string of player variables for battle_menu. Needs to be a function since variables will change.
+// Not redundant << used more than once.
+std::string getBattleStr();
 Menu battle_menu(getBattleStr(), battleMenuVec, '>', true);
 int bMenuSize = battleMenuVec.size();
 
@@ -103,10 +106,6 @@ void mett(std::string yeet);
 void playEnemyHurt();
 
 void playRand(std::vector<std::string> soundsNames);
-
-// Function to get string of player variables for battle_menu. Needs to be a function since variables will change.
-// Not redundant << used more than once.
-std::string getBattleStr();
 
     /* Primary Functions */
 // TODO: Get mana method to make mana reduction modular and immersive
