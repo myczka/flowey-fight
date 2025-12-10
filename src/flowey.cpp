@@ -75,7 +75,7 @@ int bMenuSize = battleMenuVec.size();
 Menu attack_menu("{Attack}", { "Fight", "Spells" }, true);
 Menu mercy_menu("{Mercy}", { "Spare", "Flee" }, true);
 Menu item_menu("{Items}", items);
-Menu spells_menu("{Spells}  MP" , {"Bolt [5%]", "Fira [15%]", "Blizzaga [25%]", "Rude Buster [33%]", "Chaos Blast [50%]"}, false);
+Menu spells_menu("{Spells}  MP" , {"Bolt [10%]", "Fira [20%]", "Blizzaga [25%]", "Rude Buster [33%]", "Chaos Blast [50%]"}, false);
 
     /* Helper Function Declarations */
 void ok();
@@ -202,9 +202,12 @@ start_turn:
     num = battle_menu.select();
 
     if (num == bMenuSize - 4) {
+        // Attack Menu Selection
+        // TODO: Math to balance the spell damage to mana percent ratio with flowey's health and default fight damage.
         num = attack_menu.select();
         if (num == 0) {
-            get_flowey(70);
+            // 5% of flowey's current max health
+            get_flowey(40);
         }
         else if (num == 1) {
 
@@ -215,7 +218,7 @@ start_turn:
                     get_flowey(100);
                     ok();
                     type("* Flowey tastes the electricity.");
-                    mana -= 100 * .25;
+                    mana -= 100 * .1;
                     ok();
                     break;
                 case 1:
@@ -224,7 +227,7 @@ start_turn:
                     get_flowey(150);
                     ok();
                     type("* Flowey practices burning in he!!.");
-                    mana -= 100 * .25;
+                    mana -= 100 * .20;
                     ok();
                     break;
                 default:
