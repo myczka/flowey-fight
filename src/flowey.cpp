@@ -12,10 +12,10 @@ Copyright (c) 2022-2025 Jordan Myczka. All rights reserved.
 #include <string>
 #include <vector>
 
-// All encoded audio files
-
 using namespace std;
 
+    /* Global Variables and Instances*/
+// From "myaudio.h"
 string audioDir = "./audio/";
 
 int tens = 0;
@@ -67,18 +67,17 @@ ma_sound fight;
 ma_sound fallen_down;
 ma_sound genius_evil;
 
-std::string getBattleStr();
-
 // Root Menu
 Menu battle_menu(getBattleStr(), battleMenuVec, '>', true);
 int bMenuSize = battleMenuVec.size();
 
 // Sub Menus
-Menu attack_menu("[Attack]", { "Fight", "Spells" }, true);
-Menu mercy_menu("[Mercy]", { "Spare", "Flee" }, true);
-Menu item_menu("[Items]", items);
-Menu spells_menu("[Spells]", { "Fira Throw [25%]", "Bolt Lightning [15%]", "Chaos Blast [50%]", "Rude Buster [33%]"}, false);
+Menu attack_menu("{Attack}", { "Fight", "Spells" }, true);
+Menu mercy_menu("{Mercy}", { "Spare", "Flee" }, true);
+Menu item_menu("{Items}", items);
+Menu spells_menu("{Spells}  MP" , {"Bolt [5%]", "Fira [15%]", "Blizzaga [25%]", "Rude Buster [33%]", "Chaos Blast [50%]"}, false);
 
+    /* Helper Function Declarations */
 void ok();
 
 void chara(std::string yeet, int time);
@@ -105,18 +104,36 @@ void playEnemyHurt();
 
 void playRand(std::vector<std::string> soundsNames);
 
+// Function to get string of player variables for battle_menu. Needs to be a function since variables will change.
+// Not redundant << used more than once.
+std::string getBattleStr();
+
+    /* Primary Functions */
+// TODO: Get mana method to make mana reduction modular and immersive
+void get_mana(int remove) {
+
+
+}
+
 // This function removes the amount passed from the players health
 void get_health(int remove) {
-    remove = remove - damageMod;
     int emphasis = 0;
-    int afterHealth = health - remove;
 
+    // Verify damageMod won't make remove negative
+    if (remove < damageMod) {
+        remove = 0;
+    }
+    else {
+        remove = remove - damageMod;
+    }
+
+    // Calculate the resulting player health and conduct conditional to choose between primary actions
+    int afterHealth = health - remove;
     if (remove == 0) {
         type(to_string(health) + "/600", 70);
         return;
     }
-
-    if (afterHealth > 0) {
+    else if (afterHealth > 0) {
         if (afterHealth < 100) {
             emphasis = 30;
         }
@@ -175,6 +192,7 @@ void get_flowey(int remove) {
 }  
 
 // Player's Turn Sequence
+// TODO: Redundant << used once.
 void player_turn() {
     battle_menu.setPrompt(getBattleStr());
     bMenuSize = battleMenuVec.size();
@@ -192,11 +210,20 @@ start_turn:
 
             switch (spells_menu.select()) {
                 case 0:
+                    chara("* You used Bolt.\n");
+                    sleep(100);
+                    get_flowey(100);
+                    ok();
+                    type("* Flowey tastes the electricity.");
+                    mana -= 100 * .25;
+                    ok();
+                    break;
+                case 1:
                     chara("* You used Fira.\n");
                     sleep(100);
-                    get_flowey(200);
+                    get_flowey(150);
                     ok();
-                    type("* Flowey practices burning in hell.");
+                    type("* Flowey practices burning in he!!.");
                     mana -= 100 * .25;
                     ok();
                     break;
