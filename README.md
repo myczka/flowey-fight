@@ -24,7 +24,7 @@ Though the other two songs are technically original works, they are actually ver
 ## Other Notes
 The project utilizes the song "For the Damaged Coda" by the Blonde Redhead. It is referred to as "For the Damaged Coda.wav" in the src file. You should probably include a WAV file or that exact song with that file name in your copy.
 
-In addition, the following game files from UNDERTALE were utilized as sound effects, which can be found at [this repository](https://github.com/anotherhuman123456/undertale) in the sound/audio/ directory. Keep in mind I may have renamed some of the files, so some of the listed names aren't what you're looking for, gl:
+In addition, the following game files from UNDERTALE were utilized as sound effects, which can be found at [this repository](https://github.com/anotherhuman123456/undertale) in the sound/audio/ directory:
 
 - mus_f_laugh.wav
 - snd_damage.wav
