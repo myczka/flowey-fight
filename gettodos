@@ -18,8 +18,20 @@ search_file() {
     local results=$(grep -n "// TODO:" "$file")
     
     if [ -n "$results" ]; then
-        echo "=== $file ==="
-        echo "$results"
+        # Extract just the filename without path
+        filename=$(basename "$file")
+        echo "=== $filename ==="
+        while IFS= read -r line; do
+            # Extract line number and content
+            line_num=$(echo "$line" | cut -d: -f1)
+            content=$(echo "$line" | cut -d: -f2-)
+            
+            # Extract just the TODO text (everything after "// TODO:")
+            todo_text=$(echo "$content" | sed 's/.*\/\/ TODO:\s*//')
+            
+            # Print with aligned formatting (line numbers right-aligned in 5 char field)
+            printf "  Line %5s:  %s\n" "$line_num" "$todo_text"
+        done <<< "$results"
         echo ""
     fi
 }
