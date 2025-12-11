@@ -15,6 +15,8 @@ target_link_libraries(floweyfight PRIVATE user32 gdi32)
 # Blocks *conversion from size_t to int potential loss of data* compiler warning
 target_compile_options(floweyfight PRIVATE /wd4267) 
 
+
+#### Runs at build which is what we want
 find_program(SH_EXECUTABLE NAMES sh sh.exe bash bash.exe 
 PATHS "C:/Program Files/Git/usr/bin" "C:/Program Files (x86)/Git/usr/bin")
 
@@ -32,6 +34,7 @@ else()
     message(WARNING "Shell not found - skipping todolist generation")
 endif()
 
+#### Runs at reconfig fix plz
 # Read lines from text file
 file(STRINGS "./todolist.txt" INPUT_LINES)
 

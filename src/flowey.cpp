@@ -190,7 +190,7 @@ void get_flowey(int remove) {
 }  
 
 // Player's Turn Sequence
-// TODO: Redundant << used once.
+// TODO: Redundant - used once.
 void player_turn() {
     battle_menu.setPrompt(getBattleStr());
     bMenuSize = battleMenuVec.size();
@@ -199,11 +199,13 @@ start_turn:
     clear();
     num = battle_menu.select();
 
+    // TODO: Math to balance the spell damage to mana percent ratio with flowey's health and default fight damage.
     if (num == bMenuSize - 4) {
         // Attack Menu Selection
-        // TODO: Math to balance the spell damage to mana percent ratio with flowey's health and default fight damage.
+        
         num = attack_menu.select();
         if (num == 0) {
+            // TODO: Implement the actual player attack mechanic from undertale as a way to learn threads and atomics
             // 5% of flowey's current max health
             get_flowey(40);
         }
