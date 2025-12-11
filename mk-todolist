@@ -1,0 +1,3 @@
+#!/bin/bash
+
+lib/cppLibrary/gettodos src/ > ./todolist.txt
