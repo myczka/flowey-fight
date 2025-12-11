@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# Script to find all "// TODO:" comments in C++ files
+
+# Check if an argument was provided
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 <file.cpp|directory>"
+    echo "  file.cpp    - Search a single C++ file"
+    echo "  directory   - Search all .cpp files in directory"
+    exit 1
+fi
+
+TARGET="$1"
+
+# Function to search a single file
+search_file() {
+    local file="$1"
+    local results=$(grep -n "// TODO:" "$file")
+    
+    if [ -n "$results" ]; then
+        echo "=== $file ==="
+        echo "$results"
+        echo ""
+    fi
+}
+
+# Check if target is a file or directory
+if [ -f "$TARGET" ]; then
+    # Single file
+    if [[ "$TARGET" == *.cpp ]]; then
+        search_file "$TARGET"
+    else
+        echo "Error: $TARGET is not a .cpp file"
+        exit 1
+    fi
+elif [ -d "$TARGET" ]; then
+    # Directory - search all .cpp files
+    found_any=false
+    for file in "$TARGET"/*.cpp; do
+        if [ -f "$file" ]; then
+            search_file "$file"
+            found_any=true
+        fi
+    done
+    
+    if [ "$found_any" = false ]; then
+        echo "No .cpp files found in $TARGET"
+    fi
+else
+    echo "Error: $TARGET is not a valid file or directory"
+    exit 1
+fi
