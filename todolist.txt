@@ -4,7 +4,9 @@
   Line   193:  Redundant - used once.
   Line   202:  Math to balance the spell damage to mana percent ratio with flowey's health and default fight damage.
   Line   208:  Implement the actual player attack mechanic from undertale as a way to learn threads and atomics
-  Line   397:  Mute mainEng
-  Line   437:  Continue the 'Joe Biden Pedophile Route' lore.
-  Line   667:  Doesn't change dialogue for Flowey dead
+  Line   213:  Finish adding all cases to switch statement for each spell
+  Line   214:  Modularize repetitive spell casting format into a function to be called with diff params for each spell
+  Line   398:  Mute mainEng
+  Line   438:  Continue the different paths' lore dialogue and add more.
+  Line   668:  Doesn't change dialogue for Flowey dead
 

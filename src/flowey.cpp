@@ -210,7 +210,8 @@ start_turn:
             get_flowey(40);
         }
         else if (num == 1) {
-
+            // TODO: Finish adding all cases to switch statement for each spell
+            // TODO: Modularize repetitive spell casting format into a function to be called with diff params for each spell
             switch (spells_menu.select()) {
                 case 0:
                     chara("* You used Bolt.\n");
@@ -336,7 +337,7 @@ start_turn:
     sleep(400);
 }
 
-//TODO: Make defend function to check for defend
+//TODO: Make defend function to check for defend since it's the same no matter what
 void flowey_turn() {
     int random_number_three;
     
@@ -434,7 +435,7 @@ void flowey_turn() {
 }
 
 int main(int argc, char **argv) {
-    // TODO: Continue the 'Joe Biden Pedophile Route' lore.
+    // TODO: Continue the different paths' lore dialogue and add more.
     Menu yes_no("Ready?", { "Yes", "No" }, true);
     Menu maybe("It's really you?", { "Yes", "No" }, true);
     
