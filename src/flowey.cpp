@@ -54,6 +54,10 @@ vector<string> serol = { "wildly", "friend", "his \"Hopes and Dreams\"" };
 vector<string> items = { "Candy Bar", "Candy Bar", "Apple Pie" };
 vector<string> battleMenuVec = { "Attack", "Defend", "Items", "Mercy" };
 
+vector<string> sptypeBuster = { "Buster Sword", "Mega Buster", "X Buster", "SUPER ART 1: Rude Buster", "SUPER ART 2: Buster Wolf" };
+vector<string> sptypeLimit = { "Braver", "Triple Slash", ""Blade Beam", "LIMIT BREAK 1: Cross-Slash", "LIMIT BREAK 2: Omnislash" };
+vector<string> sptypeChaos = { "Chaos Spear", "Chaos Blast", "SEVENTH EMERALD: Chaos Control", "DOOM POWER 1: Doom Spear", "DOOM POWER 2: Doom Blast",  };
+
 // Audio Engines and Sounds
 ma_engine voiceEng;
 ma_engine buffVoiceEng;
@@ -77,7 +81,7 @@ int bMenuSize = battleMenuVec.size();
 Menu attack_menu("{Attack}", { "Fight", "Spells" }, true);
 Menu mercy_menu("{Mercy}", { "Spare", "Flee" }, true);
 Menu item_menu("{Items}", items);
-Menu spells_menu("{Spells}  MP" , {"Bolt [10%]", "Fira [20%]", "Blizzaga [25%]", "Rude Buster [33%]", "Chaos Blast [50%]"}, false);
+Menu spells_menu("{Spells}  MP" , {"Bolt [10%]", "Blizzara [17%]", "Firaga [25%]", "", ""}, false);
 
     /* Helper Function Declarations */
 void ok();
@@ -117,7 +121,7 @@ void get_mana(int remove) {
 void get_health(int remove) {
     int emphasis = 0;
 
-    // Verify damageMod won't make remove negative
+    // Verify damageMod won't make remove negative but consider making negative damage a feature
     if (remove < damageMod) {
         remove = 0;
     }
@@ -146,6 +150,7 @@ void get_health(int remove) {
                 sleep(70 + emphasis);
             }
         }
+
         health = afterHealth;
         playSound(effectEng, "snd_damage.wav");
         type(to_string(afterHealth) + "/600", 70 + emphasis);
@@ -157,6 +162,7 @@ void get_health(int remove) {
 }
 
 // This function serves to print out floweys health decreasing over time and ends up reducing it by the value passed.
+// Make this a separate thread?
 void get_flowey(int remove) {
     int goal = flowey - remove;
     int length;
@@ -199,7 +205,7 @@ start_turn:
     clear();
     num = battle_menu.select();
 
-    // TODO: Math to balance the spell damage to mana percent ratio with flowey's health and default fight damage.
+    // TODO: Math to balance the spell damage to mana percent ratio with flowey's health and default {Fight} damage.
     if (num == bMenuSize - 4) {
         // Attack Menu Selection
         
@@ -306,7 +312,7 @@ start_turn:
             }
             else {
                 sleep(500);
-                chara("* Sociopaths Can't spare TRUE Flowey");
+                chara("* Sociopaths can't spare TRUE Flowey");
             }
         } 
         else if (num == 1) {
@@ -550,48 +556,7 @@ int main(int argc, char **argv) {
         goto fight_start; 
     }
     else if (name == "Joe Biden") {
-        battle_menu.setPrompt(name + "  HP " + to_string(health) + "/600");
-        pedo = true;
-        clear();
-        pause(good_song);
-        sleep(1000);
-        playSound(effectEng, "snd_floweylaugh.wav");
-        sleep(1050);
-        flow("You little child toucher, you!");
-        sleep(1800);
-        clear();
-        sleep(100);
-        get_health(500);
-        sleep(3000);
-        clear();
-        sleep(400);
-        play(genius_evil);
-        sleep(100);
-        wolf("Not in my text-based RPG combat system.", 150);
-        sleep(1500);
-        clear();
-        sleep(1500);
-        wolfey("You know what!?", 400);
-        clear();
-        wolfey("Typically I just call the cops on creepy old men like you!!", 700);
-        clear();
-        wolfey("But today... ", 600);
-        clear();
-        wolfey("TODAY, ", 500);
-        wolfey("IMMA TEACH YOU A LESSON!!", 1000);
-        clear();
-        sleep(600);
-        wolf("I'm not even gonna give you the option to attack, buddy.\n", 110);
-        sleep(500);
-        battle_menu.setPrompt(name + "  HP " + to_string(health) + "/600");
-        battle_menu.display();
-        waitTill(genius_evil, 34.2f);
-        clear();
-
-        battleMenuVec.erase(battleMenuVec.begin());
-        battle_menu.setOptions(battleMenuVec);
-        waitTill(genius_evil, 37.475f);
-        goto player_turn;
+        exit(0);
     }
 
     pause(good_song);
@@ -609,15 +574,15 @@ int main(int argc, char **argv) {
     sleep(200);
     wolf(name + ",", 100);
     sleep(380);
-    wolf(" I'm going to kill you.\n", 100);
+    wolf(" I'm going to beat you.\n", 100);
     sleep(700);
     wolf("Actually, ", 50);
-    wolf(" I'm going to do worse than kill you.\n", 60);
+    wolf("I'm going to do worse than beat you.\n", 60);
     sleep(300);
     clear();
-    wolf("I'm going to touch you...", 80);
+    wolf("I'm going to humiliate you...", 80);
     sleep(1700);
-    wolf("INAPPROPRIATELY :]", 150);
+    wolf("WITH MY MUSCLES :]", 150);
     sleep(1430);
     clear(); 
     uninit(fight);
