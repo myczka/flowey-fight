@@ -56,7 +56,7 @@ vector<string> battleMenuVec = { "Attack", "Defend", "Items", "Mercy" };
 
 vector<string> sptypeBuster = { "Buster Sword", "Mega Buster", "X Buster", "SUPER ART 1: Rude Buster", "SUPER ART 2: Buster Wolf" };
 vector<string> sptypeLimit = { "Braver", "Triple Slash", ""Blade Beam", "LIMIT BREAK 1: Cross-Slash", "LIMIT BREAK 2: Omnislash" };
-vector<string> sptypeChaos = { "Chaos Spear", "Chaos Blast", "SEVENTH EMERALD: Chaos Control", "DOOM POWER 1: Doom Spear", "DOOM POWER 2: Doom Blast",  };
+vector<string> sptypeChaos = { "Chaos Spear", "Chaos Blast", "Chaos Boost", "SEVENTH EMERALD: Chaos Control", "DOOM POWER 1: Doom Spear", "DOOM POWER 2: Doom Blast",  };
 
 // Audio Engines and Sounds
 ma_engine voiceEng;
@@ -81,7 +81,7 @@ int bMenuSize = battleMenuVec.size();
 Menu attack_menu("{Attack}", { "Fight", "Spells" }, true);
 Menu mercy_menu("{Mercy}", { "Spare", "Flee" }, true);
 Menu item_menu("{Items}", items);
-Menu spells_menu("{Spells}  MP" , {"Bolt [10%]", "Blizzara [17%]", "Firaga [25%]", "", ""}, false);
+Menu spells_menu("{Spells}  MP" , {"Bolt [10%]", "Blizzara [17%]", "Firaga [25%]"}, false);
 
     /* Helper Function Declarations */
 void ok();

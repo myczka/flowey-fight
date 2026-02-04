@@ -1,5 +1,5 @@
 # Flowey Fight
-This is literally just a command-line turn-based fight against Flowey, in C++, for practice. Please ignore the dialogue, please.
+This is literally just a command-line turn-based fight against Flowey, in C++, for practice.
 
 ## Dependencies
 This program implements some header files from [my C++ Library repo](https://github.com/myczka/cppLibrary). The repository itself had been included in this repository as a subtree under lib/cppLibrary.
