@@ -58,7 +58,7 @@ vector<string> battleMenuVec = { "Attack", "Defend", "Items", "Mercy" };
 vector<string> sptypeBuster = { "Mega Buster", "X Buster", "Rude Buster", "SUPER ART 1: Buster Sword", "SUPER ART 2: Buster Wolf", "SUPER ART 3: Buster Cannon" };
 
 // Limit gauge also serves as bar for basic attacks
-vector<string> sptypeLimit = { "Braver", "Triple Slash", ""Blade Beam", "LIMIT BREAK 1: Cross-Slash", "LIMIT BREAK 2: Omnislash" };
+vector<string> sptypeLimit = { "Braver", "Triple Slash", "Blade Beam", "LIMIT BREAK 1: Cross-Slash", "LIMIT BREAK 2: Omnislash" };
 
 // chaos boost removes inhibitors to make all attacks do more damage but all attacks require mana/more mana
 // Chaos control pauses floweys attacks for two turns? the conditions for activiation are unknown
