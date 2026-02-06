@@ -54,8 +54,14 @@ vector<string> serol = { "wildly", "friend", "his \"Hopes and Dreams\"" };
 vector<string> items = { "Candy Bar", "Candy Bar", "Apple Pie" };
 vector<string> battleMenuVec = { "Attack", "Defend", "Items", "Mercy" };
 
-vector<string> sptypeBuster = { "Buster Sword", "Mega Buster", "X Buster", "SUPER ART 1: Rude Buster", "SUPER ART 2: Buster Wolf" };
+// equip and super meter rude buster can be used after super art 1 which equips buster sword?
+vector<string> sptypeBuster = { "Mega Buster", "X Buster", "Rude Buster", "SUPER ART 1: Buster Sword", "SUPER ART 2: Buster Wolf", "SUPER ART 3: Buster Cannon" };
+
+// Limit gauge also serves as bar for basic attacks
 vector<string> sptypeLimit = { "Braver", "Triple Slash", ""Blade Beam", "LIMIT BREAK 1: Cross-Slash", "LIMIT BREAK 2: Omnislash" };
+
+// chaos boost removes inhibitors to make all attacks do more damage but all attacks require mana/more mana
+// Chaos control pauses floweys attacks for two turns? the conditions for activiation are unknown
 vector<string> sptypeChaos = { "Chaos Spear", "Chaos Blast", "Chaos Boost", "SEVENTH EMERALD: Chaos Control", "DOOM POWER 1: Doom Spear", "DOOM POWER 2: Doom Blast",  };
 
 // Audio Engines and Sounds
