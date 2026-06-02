@@ -525,6 +525,8 @@ int main(int argc, char **argv) {
         num = maybe.select();
         if (num == 1) {exit(0);}
 
+        //Test comment cuz github acting weird
+
         clear();
         play(fallen_down);
         sleep(600);
