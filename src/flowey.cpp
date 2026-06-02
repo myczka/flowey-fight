@@ -580,13 +580,13 @@ int main(int argc, char **argv) {
     sleep(200);
     wolf(name + ",", 100);
     sleep(380);
-    wolf(" I'm going to beat you.\n", 100);
+    wolf(" I'm going to fight you.\n", 100);
     sleep(700);
     wolf("Actually, ", 50);
-    wolf("I'm going to do worse than beat you.\n", 60);
+    wolf("I'm going to do more than fight you.\n", 60);
     sleep(300);
     clear();
-    wolf("I'm going to humiliate you...", 80);
+    wolf("I'm going to destroy you...", 80);
     sleep(1700);
     wolf("WITH MY MUSCLES :]", 150);
     sleep(1430);
