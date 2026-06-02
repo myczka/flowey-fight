@@ -550,7 +550,7 @@ int main(int argc, char **argv) {
         clear();
         goto fight_start;
     }
-    else if (name == "Elon") { 
+    else if (name == "") { 
         pause(good_song);
         uninit(good_song);
         init_sound(mainEng, good_song, "Dm9_G7_CM7_Am7.wav");
