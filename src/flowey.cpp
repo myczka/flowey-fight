@@ -35,7 +35,7 @@ int myArgc;
 // States
 bool lore = false;
 bool defend = false;
-bool pedo = false;
+bool badguy = false;
 
 // Strings
 string space = "";
@@ -54,15 +54,23 @@ vector<string> serol = { "wildly", "friend", "his \"Hopes and Dreams\"" };
 vector<string> items = { "Candy Bar", "Candy Bar", "Apple Pie" };
 vector<string> battleMenuVec = { "Attack", "Defend", "Items", "Mercy" };
 
-// equip and super meter rude buster can be used after super art 1 which equips buster sword?
-vector<string> sptypeBuster = { "Mega Buster", "X Buster", "Rude Buster", "SUPER ART 1: Buster Sword", "SUPER ART 2: Buster Wolf", "SUPER ART 3: Buster Cannon" };
+// equip and super meter rude buster can be used after super art 1 which equips buster sword? zero buster only becomes available after getting hit by deadly knife 3 times. rude buster equips axe and then acts as a spell. an extra equiped weapon is the name of menu title? ie attack defend (...) MegaBuster ? rude buster changes the groove * The groove changed. rude buster jp version. busster wolf: health down chunk, then nother chunk on explosion and roll down
+vector<string> sptypeBuster = { "Mega Buster", "X Buster", "Zero Buster", "Rude Buster", "SUPER ART 1: Buster Wolf", "SUPER ART 2: Buster Cannon" };
 
-// Limit gauge also serves as bar for basic attacks
-vector<string> sptypeLimit = { "Braver", "Triple Slash", "Blade Beam", "LIMIT BREAK 1: Cross-Slash", "LIMIT BREAK 2: Omnislash" };
+// Limit gauge also serves as bar for basic attacks equip Buster Sword or something, limit break 1=kyogiri kanji and smash sound maybe genkai wo koeru
+vector<string> sptypeLimit = { "Buster Sword", "Braver", "Triple Slash", "Blade Beam", "LIMIT BREAK 1: Cross-Slash", "LIMIT BREAK 2: Omnislash" };
 
 // chaos boost removes inhibitors to make all attacks do more damage but all attacks require mana/more mana
-// Chaos control pauses floweys attacks for two turns? the conditions for activiation are unknown
-vector<string> sptypeChaos = { "Chaos Spear", "Chaos Blast", "Chaos Boost", "SEVENTH EMERALD: Chaos Control", "DOOM POWER 1: Doom Spear", "DOOM POWER 2: Doom Blast",  };
+// inhibitor rings displayed in equipped items section and can be removed from there, they come pre equipped.
+// Chaos control pauses floweys attacks for two turns? the conditions for activiation are unknown chaos control: snap -> za wurudo Emerald -> Remove Inhibitors/Chaos Control
+vector<string> sptypeChaos = {
+    "Chaos Spear",
+    "Chaos Blast",
+    "Chaos Emerald",
+    "Chaos Control",
+    "DOOM POWER 1: Doom Spear",
+    "DOOM POWER 2: Doom Blast",
+};
 
 // Audio Engines and Sounds
 ma_engine voiceEng;
@@ -87,7 +95,7 @@ int bMenuSize = battleMenuVec.size();
 Menu attack_menu("{Attack}", { "Fight", "Spells" }, true);
 Menu mercy_menu("{Mercy}", { "Spare", "Flee" }, true);
 Menu item_menu("{Items}", items);
-Menu spells_menu("{Spells}  MP" , {"Bolt [10%]", "Blizzara [17%]", "Firaga [25%]"}, false);
+Menu spells_menu("{Spells}  MP" , {"Bolt [10%]", "Blizzara [20%]", "Firaga [25%]"}, false);
 
     /* Helper Function Declarations */
 void ok();
@@ -231,21 +239,25 @@ start_turn:
                     get_flowey(100);
                     ok();
                     type("* Flowey tastes the electricity.");
-                    mana -= 100 * .1;
+                    mana -= 10;
                     ok();
                     break;
                 case 1:
-                    chara("* You used Fira.\n");
+                    chara("* You used Blizzara.\n");
                     sleep(100);
-                    get_flowey(150);
+                    get_flowey(160);
                     ok();
-                    type("* Flowey practices burning in he!!.");
-                    mana -= 100 * .20;
+                    type("* Flowey embraces your cold heart.");
+                    mana -= 20;
                     ok();
                     break;
                 default:
-                    type("* This is the default.");
+                    type("* You used Firaga.");
                     sleep(100);
+                    get_flowey(200);
+                    ok();
+                    type("* Flowey practices burning in he.");
+                    mana -= 25;
                     ok();
                     goto start_turn;
                     break;
@@ -299,31 +311,39 @@ start_turn:
     else if (num == bMenuSize - 1) {
         num = mercy_menu.select();
 
+        //TODO: Make lore based dialouge and option filtering actually match Flowey and Chara's relationship ie. You can spare flowey but then Chara takes over for the player and kills him anyways. Doubles as a pseudo-tutorial where you watch Chara go through the fight optimally
+        //or build in lore for this being an alternate universe, where their dynamic is different than base UNDERTALE
         if (num == 0) {
             if (lore) {
                 sleep(500);
-                chara("* You tried to spare TRUE Flowey!");
-                ok();
-                if (flowey > 50) {
-                    type("* Flowey is strong enough to stick-up for himself");
-                }
+                chara("* Sociopaths don't spare TRUE Flowey");
             }
-            else if (pedo) {
+            else if (badguy) {
                 sleep(500);
-                chara("* You cry out and beg for mercy");
+                chara("* You tell flowey that if he backs down then you won't have to hurt him.");
                 ok();
-                wolf("You're a pathetic monster...");
+                wolf("Surrender??");
+                ok();
+                wolf("SURRENDER?!?!");
+                ok();
+                wolf("Look around, buddy. You're weaponless and WEAK! This fight is as good as won.");
                 sleep(1000);
                 clear();
             }
             else {
+                
                 sleep(500);
-                chara("* Sociopaths can't spare TRUE Flowey");
+                chara("* You tried to spare TRUE Flowey!");
+                ok();
+                if (flowey > 50)
+                {
+                    type("* Flowey is strong enough to stick-up for himself");
+                }
             }
         } 
         else if (num == 1) {
-            if (pedo) {
-                wolf("Like I'd let you run away you coward...");
+            if (badguy) {
+                wolf("Like I'd let you run away, coward...");
                 sleep(1000);
                 clear();
             } 
@@ -470,7 +490,7 @@ int main(int argc, char **argv) {
     init(buffVoiceEng);
     init_sound(effectEng, ok_sound, "menu_select.wav");
     /*init_sound(mainEng, fight, "Enter Sanman_v1.wav");*/
-    init_sound(mainEng, fight, "Axel Fania_v1.wav");
+    init_sound(mainEng, fight, "AxeloFania_v1.wav");
     init_sound(mainEng, good_song, "Your Best Friend.wav");
     init_sound(mainEng, fallen_down, "Fallen Down Lofi dithered.wav");
     init_sound(mainEng, genius_evil, "For the Damaged Coda.wav");
@@ -614,7 +634,7 @@ int main(int argc, char **argv) {
         exit(0);
     }
 
-    init_sound(mainEng, fight, "Axel Fania_v1.wav");
+    init_sound(mainEng, fight, "AxeloFania_v1.wav");
     loop(fight);
     volume(fight, 0.7f);
     beginAt(fight, 14.7f);
