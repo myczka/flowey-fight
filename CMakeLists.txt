@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.8)
 project(flowey-fight LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
-add_executable(floweyfight ./src/flowey.cpp)
+add_executable(floweyfight ./src/main.cpp)
 
 #target_include_directories(floweyfight PRIVATE ./lib/cppLibrary/)
 target_include_directories(floweyfight SYSTEM PRIVATE ./lib/cppLibrary)
@@ -118,7 +118,7 @@ file(WRITE "./TODO.md" "${MD_CONTENT}")
 # endforeach()
 
 # # Create executable with audio headers as dependencies
-# add_executable(floweyfight ./src/flowey.cpp ${AUDIO_HEADERS})
+# add_executable(floweyfight ./src/main.cpp ${AUDIO_HEADERS})
 
 # # Include the binary directory so generated headers can be found
 # target_include_directories(floweyfight PRIVATE ${CMAKE_CURRENT_BINARY_DIR})

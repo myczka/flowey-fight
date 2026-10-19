@@ -1,4 +1,4 @@
-# <i>flowey.cpp</i>
+# <i>main.cpp</i>
 -   Line    13:  (Feature Branch for Safety Sake) Modularize primary functions into their own header.
 -   Line   127:  Get mana method to make mana reduction modular and immersive
 -   Line   212:  Redundant - used once.
