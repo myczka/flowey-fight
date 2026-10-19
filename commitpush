@@ -1,0 +1,37 @@
+#!/bin/bash
+
+
+git add .
+
+echo "Created snapshot of project."
+echo "Continue?
+"
+read ans
+
+shopt -s nocasematch
+if [[ $ans == y* ]]; then
+    echo
+else
+    exit 1
+fi
+
+if [[ $# > 0 ]]; then
+    git commit -m $1
+else
+    echo "usage: $0 <message>"
+    exit 1
+fi
+
+echo "Committed snapshot(s) with given message."
+echo "Continue?
+"
+read ans
+
+shopt -s nocasematch
+if [[ $ans == y* ]]; then
+    echo
+else
+    exit 1
+fi
+
+git push origin master
