@@ -1,11 +1,11 @@
 # <i>main.cpp</i>
 -   Line    13:  (Feature Branch for Safety Sake) Modularize primary functions into their own header.
--   Line   127:  Get mana method to make mana reduction modular and immersive
--   Line   212:  Redundant - used once.
--   Line   221:  Math to balance the spell damage to mana percent ratio with flowey's health and default {Fight} damage.
--   Line   227:  Implement the actual player attack mechanic from undertale as a way to learn threads and atomics
--   Line   232:  Finish adding all cases to switch statement for each spell
--   Line   233:  Modularize repetitive spell casting format into a function to be called with diff params for each spell
--   Line   429:  Mute mainEng
--   Line   469:  Continue the different paths' lore dialogue and add more.
--   Line   660:  Doesn't change dialogue for Flowey dead
+-   Line   137:  Get mana method to make mana reduction modular and immersive
+-   Line   222:  Redundant - used once.
+-   Line   231:  Math to balance the spell damage to mana percent ratio with flowey's health and default {Fight} damage.
+-   Line   237:  Implement the actual player attack mechanic from undertale as a way to learn threads and atomics
+-   Line   242:  Finish adding all cases to switch statement for each spell
+-   Line   243:  Modularize repetitive spell casting format into a function to be called with diff params for each spell
+-   Line   439:  Mute mainEng
+-   Line   479:  Continue the different paths' lore dialogue and add more.
+-   Line   670:  Doesn't change dialogue for Flowey dead
