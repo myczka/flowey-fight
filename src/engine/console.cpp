@@ -1,4 +1,3 @@
-// #define MINIAUDIO_IMPLEMENTATION
 #include "console.h"
 
 #include <string>
@@ -9,48 +8,12 @@
 #include <ctime>
 #include <random>
 
-// #include <Windows.h>
-// #include <ctype.h>
-// #include "miniaudio.h"
-
-int get_rand(int first, int last) {
-    std::random_device rd;
-    std::mt19937 gen(rd() ^ static_cast<unsigned>(std::time(0))); // random seed with time
-    std::uniform_int_distribution<int> dist(first, last);
-    return dist(gen);
-}
-
 void sleep(int delayMs) {
     std::this_thread::sleep_for(std::chrono::milliseconds(delayMs));
 }
 
 void clear() {
     std::cout << "\033[2J\033[1;1H";
-}
-
-void triple_dot() {
-    sleep(150);
-    std::cout << ".";
-    sleep(200);
-    std::cout << ".";
-    sleep(200);
-    std::cout << ".";
-    sleep(800);
-    std::cout << "\b\b\b";
-    std::cout << "   ";
-    std::cout << "\b\b\b";
-}
-
-void triple_dot_slow() {
-    sleep(150);
-    std::cout << ".";
-    sleep(200);
-    std::cout << ".";
-    sleep(200);
-    std::cout << ".";
-    sleep(1000);
-    sleep(70);
-    clear();
 }
 
 void wrap(int i, std::string yeet, int& increm) {
@@ -70,6 +33,31 @@ void write(std::string yeet, int time) {
         std::cout << yeet[i];
         sleep(time);
     }
+}
+
+void tripleDot() {
+    sleep(150);
+    std::cout << ".";
+    sleep(200);
+    std::cout << ".";
+    sleep(200);
+    std::cout << ".";
+    sleep(800);
+    std::cout << "\b\b\b";
+    std::cout << "   ";
+    std::cout << "\b\b\b";
+}
+
+void tripleDotSlow() {
+    sleep(150);
+    std::cout << ".";
+    sleep(200);
+    std::cout << ".";
+    sleep(200);
+    std::cout << ".";
+    sleep(1000);
+    sleep(70);
+    clear();
 }
 
 void backspace(int spaces) {
@@ -94,13 +82,19 @@ void backspaceWeird(int spaces, int sleeptime) {
     }
 }
 
+int getRand(int first, int last) {
+    std::random_device rd;
+    std::mt19937 gen(rd() ^ static_cast<unsigned>(std::time(0))); // random seed with time
+    std::uniform_int_distribution<int> dist(first, last);
+    return dist(gen);
+}
+
 // Fix the buffering issue so spam doesn't spam
-void num_enter(char select) {
-    char choice;
+void pressContinue(char select) {
+    char choice = 'a';
+
     std::cout << std::endl;
-    do {
-        choice = _getch();
-    } while (choice != select);
+    while (choice != select && _kbhit()) choice = _getch();
     clear();
 }
 
