@@ -1,0 +1,32 @@
+---
+Language: Cpp
+BasedOnStyle: LLVM
+
+# Indentation
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+IndentCaseLabels: true
+AccessModifierOffset: -4
+
+# Braces: opening brace on the same line (K&R / "attach"), `} else {` cuddled
+BreakBeforeBraces: Attach
+
+# Don't reflow long lines or comments; avoids noisy diffs on existing code
+ColumnLimit: 0
+ReflowComments: false
+
+# Pointers and references bind to the type: `ma_engine& engine`, `char** argv`
+PointerAlignment: Left
+DerivePointerAlignment: false
+
+# Never reorder includes: order can matter (e.g. Windows.h vs miniaudio.h)
+SortIncludes: Never
+
+# Short one-liners are fine, e.g. `if (x) { return; }`
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+# Keep extra blank lines you've deliberately added (max 1)
+MaxEmptyLinesToKeep: 1

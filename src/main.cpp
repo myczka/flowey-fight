@@ -2,8 +2,8 @@
 This program presents an interactive command line turn-based RPG fight against Flowey.
 */
 
-#include "consoleaudio.h"
-#include "Menu.h"
+#include "engine/consoleaudio.h"
+#include "engine/Menu.h"
 #include <iostream>
 #include <string>
 #include <vector>
