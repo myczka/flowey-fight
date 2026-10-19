@@ -1,6 +1,4 @@
-#ifndef MENU_H
-#define MENU_H
-#define MINIAUDIO_IMPLEMENTATION
+#pragma once
 
 /* Copyright (c) 2025 Jordan Myczka */
 
@@ -287,5 +285,3 @@ int Menu::readKey() {
 //        std::cerr << "Failed to initialize audio engine." << std::endl;
 //    }
 //}
-
-#endif

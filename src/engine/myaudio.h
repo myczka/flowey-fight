@@ -1,7 +1,4 @@
 #pragma once
-#ifndef MYAUDIO_H
-#define MYAUDIO_H
-#define MINIAUDIO_IMPLEMENTATION
 
 #include "miniaudio.h"
 #include <iostream>
@@ -106,8 +103,9 @@ void beginAt(ma_sound& sound, float seconds) {
 }
 
 void endAt(ma_sound& sound, float seconds) {
-    ma_sound_set_stop_time_in_milliseconds(&sound,
-                                           ma_engine_get_time_in_milliseconds(ma_sound_get_engine(&sound)) + ma_sound_get_time_in_milliseconds(&sound) + seconds);
+    ma_sound_set_stop_time_in_milliseconds(
+        &sound,
+        ma_engine_get_time_in_milliseconds(ma_sound_get_engine(&sound)) + ma_sound_get_time_in_milliseconds(&sound) + seconds);
 }
 
 void play(ma_sound& sound) {
@@ -126,8 +124,6 @@ void stop(ma_engine& engine) {
     ma_engine_stop(&engine);
 }
 
-void reset(ma_sound& sound) {
-    ma_sound_set_at_end(&sound, false);
-}
-
-#endif
+// void reset(ma_sound& sound) {
+//     ma_sound_set_at_end(&sound, false);
+// }
