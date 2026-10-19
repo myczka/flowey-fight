@@ -3,8 +3,10 @@
 #include "myaudio.h"
 #include "console.h"
 
+#include <conio.h>
+
 void playRandSnd(ma_engine& engine, std::vector<std::string> soundsNames) {
-    playSound(engine, soundsNames.at(get_rand(0, soundsNames.size() - 1)));
+    playSound(engine, soundsNames.at(getRand(0, soundsNames.size() - 1)));
 }
 
 void waitTill(ma_sound& sound, float seconds) {
