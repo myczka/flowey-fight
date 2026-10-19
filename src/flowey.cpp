@@ -1,0 +1,760 @@
+/* 
+This program presents an interactive command line turn-based RPG fight against Flowey.
+*/
+
+#include "consoleaudio.h"
+#include "Menu.h"
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+// TODO: (Feature Branch for Safety Sake) Modularize primary functions into their own header.
+
+    /* Global Variables and Instances*/
+// From "myaudio.h"
+
+enum Checkpoint {
+    NOSTALGIA,
+    BETRAYAL,
+    WHY,
+    MAKEUP,
+    DEATH,
+    SPARE
+} loreState;
+
+string audioDir = "./audio/";
+
+int tens = 0;
+int hundreds = 8;
+int flowey = 800;
+int health = 600;
+int damageMod = 0;
+double mana = 100.0;
+
+int num = 0;
+int turn = 0;
+
+int typeTime = 30;
+int flowTime = 50;
+int charaTime = 50;
+int myArgc;
+
+// States
+bool lore = false;
+bool defend = false;
+bool badguy = false;
+
+// Strings
+string space = "";
+string yeet = "";
+string name = "Debug";
+string last;
+string floweyText = "snd_floweytalk1.wav";
+string wolfeyText = "snd_floweytalk2.wav";
+string charaText = "char_text.wav";
+string menuText = "menu_text.wav";
+
+// Vectors
+vector<string> mttTexts = { "snd_mtt1.wav", "snd_mtt2.wav", "snd_mtt3.wav", "snd_mtt4.wav", "snd_mtt5.wav", "snd_mtt6.wav", "snd_mtt7.wav", "snd_mtt8.wav", "snd_mtt9.wav" };
+vector<string> lores = { "sadistically", "nightmare", "your GENOCIDE" };
+vector<string> serol = { "wildly", "friend", "his \"Hopes and Dreams\"" };
+vector<string> items = { "Candy Bar", "Candy Bar", "Apple Pie" };
+vector<string> battleMenuVec = { "Attack", "Defend", "Items", "Mercy" };
+
+// equip and super meter rude buster can be used after super art 1 which equips buster sword? zero buster only becomes available after getting hit by deadly knife 3 times. rude buster equips axe and then acts as a spell. an extra equiped weapon is the name of menu title? ie attack defend (...) MegaBuster ? rude buster changes the groove * The groove changed. rude buster jp version. busster wolf: health down chunk, then nother chunk on explosion and roll down
+vector<string> sptypeBuster = { "Mega Buster", "X Buster", "Zero Buster", "Rude Buster", "SUPER ART 1: Buster Wolf", "SUPER ART 2: Buster Cannon" };
+
+// Limit gauge also serves as bar for basic attacks equip Buster Sword or something, limit break 1=kyogiri kanji and smash sound maybe genkai wo koeru
+vector<string> sptypeLimit = { "Buster Sword", "Braver", "Triple Slash", "Blade Beam", "LIMIT BREAK 1: Cross-Slash", "LIMIT BREAK 2: Omnislash" };
+
+// chaos boost removes inhibitors to make all attacks do more damage but all attacks require mana/more mana
+// inhibitor rings displayed in equipped items section and can be removed from there, they come pre equipped.
+// Chaos control pauses floweys attacks for two turns? the conditions for activiation are unknown chaos control: snap -> za wurudo Emerald -> Remove Inhibitors/Chaos Control
+vector<string> sptypeChaos = {
+    "Chaos Spear",
+    "Chaos Blast",
+    "Chaos Emerald",
+    "Chaos Control",
+    "DOOM POWER 1: Doom Spear",
+    "DOOM POWER 2: Doom Blast",
+};
+
+// Audio Engines and Sounds
+ma_engine voiceEng;
+ma_engine buffVoiceEng;
+ma_engine mainEng;
+ma_engine effectEng;
+ma_sound ok_sound;
+ma_sound happy_voice;
+ma_sound good_song;
+ma_sound fight;
+ma_sound fallen_down;
+ma_sound genius_evil;
+
+// Root Menu
+// Function to get string of player variables for battle_menu. Needs to be a function since variables will change.
+// Not redundant << used more than once.
+std::string getBattleStr();
+Menu battle_menu(getBattleStr(), battleMenuVec, '>', true);
+int bMenuSize = battleMenuVec.size();
+
+// Sub Menus
+Menu attack_menu("{Attack}", { "Fight", "Spells" }, true);
+Menu mercy_menu("{Mercy}", { "Spare", "Flee" }, true);
+Menu item_menu("{Items}", items);
+Menu spells_menu("{Spells}  MP" , {"Bolt [10%]", "Blizzara [20%]", "Firaga [25%]"}, false);
+
+    /* Helper Function Declarations */
+void ok();
+
+void chara(std::string yeet, int time);
+
+void chara(std::string yeet);
+
+void type(std::string yeet, int time);
+
+void type(std::string yeet);
+
+void flow(std::string yeet, int sleeptime);
+
+void flow(std::string yeet);
+
+void wolf(std::string yeet, int time);
+
+void wolf(std::string yeet);
+
+void wolfey(std::string yeet, int sleeptime);
+
+void mett(std::string yeet);
+
+void playEnemyHurt();
+
+void playRand(std::vector<std::string> soundsNames);
+
+    /* Primary Functions */
+// TODO: Get mana method to make mana reduction modular and immersive
+void get_mana(int remove) {
+
+
+}
+
+// This function removes the amount passed from the players health
+void get_health(int remove) {
+    int emphasis = 0;
+
+    // Verify damageMod won't make remove negative but consider making negative damage a feature
+    if (remove < damageMod) {
+        remove = 0;
+    }
+    else {
+        remove = remove - damageMod;
+    }
+
+    // Calculate the resulting player health and conduct conditional to choose between primary actions
+    int afterHealth = health - remove;
+    if (remove == 0) {
+        type(to_string(health) + "/600", 70);
+        return;
+    }
+    else if (afterHealth > 0) {
+        if (afterHealth < 100) {
+            emphasis = 30;
+        }
+
+        type(name + "  HP " + to_string(health) + "/600", 50 + emphasis);
+        playSound(effectEng, "slash.wav");
+        backspace(4 + to_string(health).length(), 20 + emphasis);
+
+        if (to_string(health).length() > to_string(afterHealth).length()) {
+            for (int i = 0; i < to_string(health).length() - to_string(afterHealth).length(); i++) {
+                cout << " ";
+                sleep(70 + emphasis);
+            }
+        }
+
+        health = afterHealth;
+        playSound(effectEng, "snd_damage.wav");
+        type(to_string(afterHealth) + "/600", 70 + emphasis);
+    }
+    else {
+        health = 0;
+        type(name + "  HP " + to_string(health) + "/600", 200);
+    }
+}
+
+// This function serves to print out floweys health decreasing over time and ends up reducing it by the value passed.
+// Make this a separate thread?
+void get_flowey(int remove) {
+    int goal = flowey - remove;
+    int length;
+
+    // Initial health printout and damage sfx
+    playSound(effectEng, "slash.wav");
+    type("Flowey's HP " + to_string(flowey) + "/800");
+    sleep(400);
+    backspace(4);
+
+    // Ticks down the tens place and hundreds place
+    while (flowey != goal + 10) {
+        flowey -= 10;
+        length = to_string(flowey).length();
+        backspace(length);
+        playRand(mttTexts);
+        cout << flowey;
+        sleep(70);
+    }
+
+    // Ticks down the ones place
+    for (int i = 0; i < 10; i++) {
+        length = to_string(flowey).length();
+        flowey -= 1;
+        backspace(length);
+        playRand(mttTexts);
+        cout << flowey;
+        sleep(100);
+    }
+    playEnemyHurt();
+}  
+
+// Player's Turn Sequence
+// TODO: Redundant - used once.
+void player_turn() {
+    battle_menu.setPrompt(getBattleStr());
+    bMenuSize = battleMenuVec.size();
+    
+start_turn:
+    clear();
+    num = battle_menu.select();
+
+    // TODO: Math to balance the spell damage to mana percent ratio with flowey's health and default {Fight} damage.
+    if (num == bMenuSize - 4) {
+        // Attack Menu Selection
+        
+        num = attack_menu.select();
+        if (num == 0) {
+            // TODO: Implement the actual player attack mechanic from undertale as a way to learn threads and atomics
+            // 5% of flowey's current max health
+            get_flowey(40);
+        }
+        else if (num == 1) {
+            // TODO: Finish adding all cases to switch statement for each spell
+            // TODO: Modularize repetitive spell casting format into a function to be called with diff params for each spell
+            switch (spells_menu.select()) {
+                case 0:
+                    chara("* You used Bolt.\n");
+                    sleep(100);
+                    get_flowey(100);
+                    ok();
+                    type("* Flowey tastes the electricity.");
+                    mana -= 10;
+                    ok();
+                    break;
+                case 1:
+                    chara("* You used Blizzara.\n");
+                    sleep(100);
+                    get_flowey(160);
+                    ok();
+                    type("* Flowey embraces your cold heart.");
+                    mana -= 20;
+                    ok();
+                    break;
+                default:
+                    type("* You used Firaga.");
+                    sleep(100);
+                    get_flowey(200);
+                    ok();
+                    type("* Flowey practices burning in he.");
+                    mana -= 25;
+                    ok();
+                    goto start_turn;
+                    break;
+            }
+        }
+        else {
+            goto start_turn; 
+        }
+    }
+    else if (num == bMenuSize - 3) {
+        defend = true;
+        sleep(500);
+        chara("* You got into the fetal position.");
+        ok();
+        
+    }
+    else if (num == bMenuSize - 2) {
+        num = item_menu.select();
+
+        //SOLVES: Bad index accessor
+        if (num == 7) goto start_turn;
+        if (items.at(num) == "Apple Pie") {
+            chara("* Ate an Apple Pie");
+            ok();
+            type("* Gained 300 HP!");
+            ok();
+            health += 300;
+            items.erase(items.begin() + num);
+        } 
+        else if (items.at(num) == "Candy Bar") {
+            health += 100;
+            damageMod += 150;
+            chara("* Ate a Candy Bar.");
+            ok();
+            type("* Defense increased!\n");
+            type("* Gained 100 HP!");
+            ok();
+            items.erase(items.begin() + num);
+        }
+        else {
+            goto start_turn;
+        }
+
+        // Sets items vector to empty to fix issue passing empty vec to setOptions and to inform player that all items have been used.
+        if (items.empty()) {
+            items.push_back("Empty");
+        }
+
+        item_menu.setOptions(items);
+    }
+    else if (num == bMenuSize - 1) {
+        num = mercy_menu.select();
+
+        //TODO: Make lore based dialouge and option filtering actually match Flowey and Chara's relationship ie. You can spare flowey but then Chara takes over for the player and kills him anyways. Doubles as a pseudo-tutorial where you watch Chara go through the fight optimally
+        //or build in lore for this being an alternate universe, where their dynamic is different than base UNDERTALE
+        if (num == 0) {
+            if (lore) {
+                sleep(500);
+                chara("* Sociopaths don't spare TRUE Flowey");
+            }
+            else if (badguy) {
+                sleep(500);
+                chara("* You tell flowey that if he backs down then you won't have to hurt him.");
+                ok();
+                wolf("Surrender??");
+                ok();
+                wolf("SURRENDER?!?!");
+                ok();
+                wolf("Look around, buddy. You're weaponless and WEAK! This fight is as good as won.");
+                sleep(1000);
+                clear();
+            }
+            else {
+                
+                sleep(500);
+                chara("* You tried to spare TRUE Flowey!");
+                ok();
+                if (flowey > 50)
+                {
+                    type("* Flowey is strong enough to stick-up for himself");
+                }
+            }
+        } 
+        else if (num == 1) {
+            if (badguy) {
+                wolf("Like I'd let you run away, coward...");
+                sleep(1000);
+                clear();
+            } 
+            else {
+                num = get_rand(0, 1);
+                if (num == 1) {
+                    chara("* You got away safely!");
+                    sleep(500);
+                    exit(0);
+                }
+                else {
+                    type("* Lol better luck next turn");
+                }
+            }
+        }
+        else {
+            goto start_turn;
+        }
+    }
+    else {
+        goto start_turn;
+    }
+    sleep(400);
+}
+
+//TODO: Make defend function to check for defend since it's the same no matter what
+void flowey_turn() {
+    int random_number_three;
+    
+    srand(static_cast<unsigned int>(time(0)));
+
+    if (turn > 1) {
+        random_number_three = rand() % 80;
+    }
+    else {
+        random_number_three = rand() % 69;
+    }
+    
+    clear();
+    
+    if (random_number_three <= 33) {
+        type("* Flowey used Real Knife!\n");
+        if (defend) {
+            sleep(900);
+            chara("* You blocked the attack", 50);
+            triple_dot();
+            defend = false;
+            random_number_three = 79;
+            clear();
+            goto exit;
+        }
+        sleep(700);
+        get_health(200);
+    }
+    else if (random_number_three <= 53) {
+        sleep(80);
+        type("* Flowey used Piercing Vines.\n");
+        if (defend) {
+            sleep(900);
+            chara("* You blocked the attack", 50);
+            triple_dot();
+            defend = false;
+            random_number_three = 79;
+            clear();
+            goto exit;
+        }
+        sleep(500);
+        get_health(300);
+    }
+    else if (random_number_three <= 69) {
+        sleep(80);
+        type("* Flowey used Rainbow Blast?\n");
+        sleep(600);
+        get_health(500);
+    }
+    else if (random_number_three <= 75) {
+        if (lore) {
+
+        }
+        else {
+            sleep(80);
+            type("* Flowey erased you!!!\n");
+            if (!defend) {
+                // TODO: Mute mainEng
+                type("9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999", 1);
+                exit(0);
+            }
+            sleep(500);
+            health = 1;
+            get_health(0);
+        }
+        
+    }
+    else {
+        type("* Doged the attack!\n");
+        sleep(500);
+        get_health(0);
+    }
+    ok();
+    clear();
+
+    exit:
+    sleep(100);
+    if (random_number_three <= 33) {
+        type("* Flowey laughs " + lores[0]);
+    }
+    else if (random_number_three <= 53) {
+        type("* Flowey claims he is your best " + lores[1]);
+    }
+    else if (random_number_three <= 69) {
+        type("* Flowey remembers " + lores[2]);
+    }
+    else if (random_number_three <= 73) {
+        type("* Flowey feels nothing");
+    }
+    else {
+        type("* Flowey hates your guts");
+    }
+    ok();
+    sleep(150);
+}
+
+int main(int argc, char **argv) {
+    // TODO: Continue the different paths' lore dialogue and add more.
+    Menu yes_no("Ready?", { "Yes", "No" }, true);
+    Menu maybe("It's really you?", { "Yes", "No" }, true);
+    
+    myArgc = argc;
+
+    if (items.empty()) {
+        if (argc > 1) {
+            for (int i = 1; i < argc; ++i) {
+                items.push_back(argv[i]);
+            }
+        }
+        else {
+            items.push_back("Empty");
+        }
+    }
+
+    init(mainEng);
+    init(voiceEng);
+    init(effectEng);
+    init(buffVoiceEng);
+    init_sound(effectEng, ok_sound, "menu_select.wav");
+    /*init_sound(mainEng, fight, "Enter Sanman_v1.wav");*/
+    init_sound(mainEng, fight, "AxeloFania_v1.wav");
+    init_sound(mainEng, good_song, "Your Best Friend.wav");
+    init_sound(mainEng, fallen_down, "Fallen Down Lofi dithered.wav");
+    init_sound(mainEng, genius_evil, "For the Damaged Coda.wav");
+
+    pitch(ok_sound, .5);
+    pitch(fallen_down, 0.75);
+    
+    volume(fallen_down, 0.6f);
+    volume(effectEng, 0.8f);
+    volume(voiceEng, 0.38f);
+    volume(buffVoiceEng, 1.2f);
+    volume(good_song, 1);
+    volume(fight, 0.80f);
+    volume(genius_evil, .5);
+
+    loop(fallen_down);
+
+    start(buffVoiceEng);
+    start(voiceEng);
+    start(mainEng);
+    //goto debug;
+
+    play(good_song);
+
+    sleep(1000);
+    flow("Howdy!");
+    sleep(500);
+    flow(" I'm Flowey!\n");
+    sleep(600);
+    flow("Flowey the Flower!");
+    sleep(500);
+    clear();
+    flow("If I may ask,");
+    sleep(350);
+    flow(" what is your name?\n");
+
+    getline(cin, name);
+
+    if (name == "Chara") {
+        lore = true;
+        lores = serol;
+        flowTime = 75;
+        typeTime = 40;
+
+        clear();
+        pause(good_song);
+
+        wolf("It's really you?\n", 90);
+        sleep(100);
+        chara(" Yes   No\n", 65);
+
+        num = maybe.select();
+        if (num == 1) {exit(0);}
+
+        //Test comment cuz github acting weird
+
+        clear();
+        play(fallen_down);
+        sleep(600);
+        flow("I've been waiting...");
+        sleep(800);
+        clear();
+        flow("I knew you were still alive");
+        triple_dot_slow();
+        sleep(1000);
+        clear();
+        flow("I've missed you...");
+        sleep(900);
+        clear();
+        flow("...but I can never forgive you.");
+        sleep(1000);
+        clear();
+        flow("I can never forgive you because of what you did");
+        triple_dot_slow();
+        sleep(1100);
+        clear();
+        flow("...and who you became.");
+        sleep(3000);
+        clear();
+        goto fight_start;
+    }
+    else if (name == "") { 
+        pause(good_song);
+        uninit(good_song);
+        init_sound(mainEng, good_song, "Dm9_G7_CM7_Am7.wav");
+        play(good_song);
+        loop(good_song);
+        pitch(good_song, 0.9f);
+        volume(good_song, 0.8f);
+        clear();
+        goto fight_start; 
+    }
+    else if (name == "Joe Biden") {
+        exit(0);
+    }
+
+    pause(good_song);
+    sleep(400);
+    clear();
+    playSound(effectEng, "snd_screenshake.wav");
+    sleep(1000);
+    playSound(effectEng, "mus_f_laugh.wav");
+    sleep(6000);
+    play(fight);
+    sleep(300);
+   
+    endAt(fight, 14000); 
+
+    sleep(200);
+    wolf(name + ",", 100);
+    sleep(380);
+    wolf(" I'm going to fight you.\n", 100);
+    sleep(700);
+    wolf("Actually, ", 50);
+    wolf("I'm going to do more than fight you.\n", 60);
+    sleep(300);
+    clear();
+    wolf("I'm going to destroy you...", 80);
+    sleep(1700);
+    wolf("WITH MY MUSCLES :]", 150);
+    sleep(1430);
+    clear(); 
+    uninit(fight);
+
+//debug:
+    flow("Ready?\n", 50);
+    sleep(100);
+    chara(" Yes   No\n", 65);
+
+    num = yes_no.select();
+
+    if (num == 0) {
+        playSound(effectEng, "start.wav");
+        wolf("Let's roll.\n");
+        sleep(600);
+        clear();
+    }
+    else {
+        flow("k bye.");
+        sleep(300);
+        exit(0);
+    }
+
+    init_sound(mainEng, fight, "AxeloFania_v1.wav");
+    loop(fight);
+    volume(fight, 0.7f);
+    beginAt(fight, 14.7f);
+    type("* Flowey Attacks!\n", 25);
+    sleep(335);
+    clear();
+    sleep(300);
+
+fight_start:
+    while (flowey > 0) {
+
+        turn += 1;
+
+        flowey_turn();
+
+        if (health < 1) {
+            break;
+        }
+player_turn:
+        player_turn();
+
+    }
+    
+    // TODO: Doesn't change dialogue for Flowey dead
+    sleep(360);
+    clear();
+    flow("* What will you do?\n");
+    pitchDown(fight);
+    pitchDown(genius_evil);
+    triple_dot();
+    pitchDown(fight);
+    //pitchDown(genius_evil);
+    sleep(400);
+    get_health(0);
+    sleep(1000);
+    triple_dot_slow();
+    triple_dot();
+    flow("Oh wait", 70);
+    pitchDown(fight);
+    pitchDown(genius_evil);
+    triple_dot();
+    clear();
+
+    wolf("What's wrong?");
+    sleep(1000);
+    pitchDown(fight);
+    clear();
+    pitchDown(fight);
+    triple_dot_slow();
+    pitchDown(fight);
+    wolf("You look pale :)", 100);
+    pitchDown(fight);
+    sleep(1000);
+}
+
+std::string getBattleStr() {
+    return (name + "  HP " + to_string(health) + "/600" + "  MN " + to_string(int(mana)) + "%");
+}
+
+void ok() {
+   
+    num_enter('z', ok_sound);
+}
+
+void chara(std::string yeet, int time) {
+    write(yeet, time, buffVoiceEng, charaText);
+}
+
+void chara(std::string yeet) {
+    chara(yeet, charaTime);
+}
+
+void type(std::string yeet, int time) {
+    write(yeet, time, voiceEng, menuText);
+}
+
+void type(std::string yeet) {
+    type(yeet, typeTime);
+}
+
+void flow(std::string yeet, int sleeptime) {
+    write(yeet, flowTime, voiceEng, floweyText);
+    sleep(sleeptime);
+}
+
+void flow(std::string yeet) {
+    flow(yeet, 0);
+}
+
+void wolf(std::string yeet, int time) {
+    write(yeet, time, buffVoiceEng, wolfeyText);
+}
+
+void wolf(std::string yeet) {
+    wolf(yeet, flowTime);
+}
+
+void wolfey(std::string yeet, int sleeptime) {
+    wolf(yeet, flowTime + 30);
+    sleep(sleeptime);
+}
+
+void mett(std::string yeet) {
+    write(yeet, 60, voiceEng, mttTexts);
+}
+
+void playEnemyHurt() {
+    playSound(effectEng, "snd_hurt1.wav");
+    sleep(700);
+}
+
+void playRand(std::vector<std::string> soundsNames) {
+    playRandSnd(voiceEng, mttTexts);
+}
