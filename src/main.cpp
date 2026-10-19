@@ -341,7 +341,7 @@ start_turn:
                 sleep(1000);
                 clear();
             } else {
-                num = get_rand(0, 1);
+                num = getRand(0, 1);
                 if (num == 1) {
                     chara("* You got away safely!");
                     sleep(500);
@@ -378,7 +378,7 @@ void flowey_turn() {
         if (defend) {
             sleep(900);
             chara("* You blocked the attack", 50);
-            triple_dot();
+            tripleDot();
             defend = false;
             random_number_three = 79;
             clear();
@@ -392,7 +392,7 @@ void flowey_turn() {
         if (defend) {
             sleep(900);
             chara("* You blocked the attack", 50);
-            triple_dot();
+            tripleDot();
             defend = false;
             random_number_three = 79;
             clear();
@@ -535,7 +535,7 @@ int main(int argc, char** argv) {
         sleep(800);
         clear();
         flow("I knew you were still alive");
-        triple_dot_slow();
+        tripleDotSlow();
         sleep(1000);
         clear();
         flow("I've missed you...");
@@ -545,7 +545,7 @@ int main(int argc, char** argv) {
         sleep(1000);
         clear();
         flow("I can never forgive you because of what you did");
-        triple_dot_slow();
+        tripleDotSlow();
         sleep(1100);
         clear();
         flow("...and who you became.");
@@ -641,18 +641,18 @@ fight_start:
     flow("* What will you do?\n");
     pitchDown(fight);
     pitchDown(genius_evil);
-    triple_dot();
+    tripleDot();
     pitchDown(fight);
     //pitchDown(genius_evil);
     sleep(400);
     get_health(0);
     sleep(1000);
-    triple_dot_slow();
-    triple_dot();
+    tripleDotSlow();
+    tripleDot();
     flow("Oh wait", 70);
     pitchDown(fight);
     pitchDown(genius_evil);
-    triple_dot();
+    tripleDot();
     clear();
 
     wolf("What's wrong?");
@@ -660,7 +660,7 @@ fight_start:
     pitchDown(fight);
     clear();
     pitchDown(fight);
-    triple_dot_slow();
+    tripleDotSlow();
     pitchDown(fight);
     wolf("You look pale :)", 100);
     pitchDown(fight);
