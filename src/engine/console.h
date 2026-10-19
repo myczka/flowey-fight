@@ -23,7 +23,7 @@ void triple_dot();
 
 void triple_dot_slow();
 
-void wrap(int i, std::string yeet, int &increm);
+void wrap(int i, std::string yeet, int& increm);
 
 void write(std::string yeet, int time);
 
@@ -84,7 +84,7 @@ void num_enter(char select);
 //
 //void playSound(ma_engine &engine, std::string file) {
 //    file = "./bin/" + file;
-//    
+//
 //    ma_engine_play_sound(&engine, file.c_str(), NULL);
 //}
 //
@@ -127,8 +127,8 @@ void num_enter(char select);
 //}
 //
 //void endAt(ma_sound &sound, float seconds) {
-//        ma_sound_set_stop_time_in_milliseconds(&sound, 
-//            ma_engine_get_time_in_milliseconds(ma_sound_get_engine(&sound)) 
+//        ma_sound_set_stop_time_in_milliseconds(&sound,
+//            ma_engine_get_time_in_milliseconds(ma_sound_get_engine(&sound))
 //            + ma_sound_get_time_in_milliseconds(&sound) + seconds);
 //}
 //

@@ -12,17 +12,17 @@
 
 class Menu {
 public:
-    Menu(std::string prompt, const std::vector<std::string> &options, bool sideways = false);
-    Menu(std::string prompt, const std::vector<std::string> &options, char select, bool sideways = false);
+    Menu(std::string prompt, const std::vector<std::string>& options, bool sideways = false);
+    Menu(std::string prompt, const std::vector<std::string>& options, char select, bool sideways = false);
     ~Menu();
     void clear();
     void display();
     void display(bool val);
     int select();
     int readKey();
-    void setOptions(std::vector<std::string> &options);
+    void setOptions(std::vector<std::string>& options);
     void setPrompt(std::string prompt);
-    
+
 private:
     char selected = '*';
     const char empty = ' ';
@@ -41,7 +41,7 @@ private:
     void playSelectSound(std::string ohYeah);
 };
 
-Menu::Menu(std::string prompt, const std::vector<std::string> &options, bool sideways)
+Menu::Menu(std::string prompt, const std::vector<std::string>& options, bool sideways)
     : sideways(sideways), options(options), prompt(prompt) {
     size = options.size();
     truesize = size - 1;
@@ -50,8 +50,7 @@ Menu::Menu(std::string prompt, const std::vector<std::string> &options, bool sid
         for (int i = 0; i < size; ++i) {
             Menu::options.at(i) = " " + Menu::options.at(i);
         }
-    }
-    else {
+    } else {
         for (int i = 0; i < size; ++i) {
             Menu::options.at(i) = "  " + Menu::options.at(i);
         }
@@ -65,8 +64,8 @@ Menu::Menu(std::string prompt, const std::vector<std::string> &options, bool sid
     }
 }
 
-Menu::Menu(std::string prompt, const std::vector<std::string> &options, char select, bool sideways)
-    :  selected(select), sideways(sideways), options(options), prompt(prompt) {
+Menu::Menu(std::string prompt, const std::vector<std::string>& options, char select, bool sideways)
+    : selected(select), sideways(sideways), options(options), prompt(prompt) {
     size = options.size();
     truesize = size - 1;
     selected = select;
@@ -75,8 +74,7 @@ Menu::Menu(std::string prompt, const std::vector<std::string> &options, char sel
         for (int i = 0; i < size; ++i) {
             Menu::options.at(i) = " " + Menu::options.at(i);
         }
-    }
-    else {
+    } else {
         for (int i = 0; i < size; ++i) {
             Menu::options.at(i) = "  " + Menu::options.at(i);
         }
@@ -100,7 +98,7 @@ void Menu::clear() {
     std::cout << "\033[2J\033[1;1H";
 }
 
-void Menu::setOptions(std::vector<std::string> &options) {
+void Menu::setOptions(std::vector<std::string>& options) {
     this->options = options;
     size = options.size();
     truesize = size - 1;
@@ -109,8 +107,7 @@ void Menu::setOptions(std::vector<std::string> &options) {
         for (int i = 0; i < size; ++i) {
             Menu::options.at(i) = " " + Menu::options.at(i);
         }
-    }
-    else {
+    } else {
         for (int i = 0; i < size; ++i) {
             Menu::options.at(i) = "  " + Menu::options.at(i);
         }
@@ -134,13 +131,12 @@ void Menu::display() {
 
     std::cout << Menu::prompt << std::endl;
     playSelectSound("menu_navigate.wav");
-    
+
     if (sideways) {
         for (int i = 0; i < size; ++i) {
             std::cout << options[i] << "  ";
         }
-    }
-    else {
+    } else {
         for (int i = 0; i < size; ++i) {
             std::cout << options[i] << std::endl;
         }
@@ -159,8 +155,7 @@ void Menu::display(bool val) {
         for (int i = 0; i < size; ++i) {
             std::cout << options[i] << "  ";
         }
-    }
-    else {
+    } else {
         for (int i = 0; i < size; ++i) {
             std::cout << options[i] << std::endl;
         }
@@ -177,29 +172,24 @@ int Menu::select() {
                 options[index][0] = empty;
                 index++;
                 options[index][0] = selected;
-            }
-            else {
+            } else {
                 options[index][0] = empty;
                 index -= truesize;
                 options[index][0] = selected;
             }
-        }
-        else if (key == 1 || key == 3) {
+        } else if (key == 1 || key == 3) {
             if (index != 0) {
                 options[index][0] = empty;
                 index--;
                 options[index][0] = selected;
-            }
-            else {
+            } else {
                 options[index][0] = empty;
                 index += truesize;
                 options[index][0] = selected;
             }
-        }
-        else if (key == 7) {
+        } else if (key == 7) {
             break;
-        }
-        else {
+        } else {
             selectedStr = options[index];
             options[index][0] = empty;
             selectedStr[0] = empty;
@@ -214,8 +204,7 @@ int Menu::select() {
     clear();
     if (key == 7) {
         return key;
-    }
-    else {
+    } else {
         return index;
     }
 }
@@ -242,18 +231,23 @@ int Menu::readKey() {
         for (DWORD i = 0; i < cNumRead; i++) {
             if (irInBuf[i].EventType == KEY_EVENT && irInBuf[i].Event.KeyEvent.bKeyDown) {
                 //if (Menu::sideways) {
-                    switch (irInBuf[i].Event.KeyEvent.wVirtualKeyCode) {
-                        case VK_UP: return 1;
-                        case VK_DOWN: return 2;
-                        case VK_LEFT: return 3;
-                        case VK_RIGHT: return 4;
-                        case 0x5A: 
-                            SetConsoleMode(hStdin, fdwOldMode & ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT));
-                            playSelectSound("menu_select.wav"); return 0;
-                        case 0x58: 
-                            SetConsoleMode(hStdin, fdwOldMode & ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT));
-                            return 7 ;
-                    }
+                switch (irInBuf[i].Event.KeyEvent.wVirtualKeyCode) {
+                    case VK_UP:
+                        return 1;
+                    case VK_DOWN:
+                        return 2;
+                    case VK_LEFT:
+                        return 3;
+                    case VK_RIGHT:
+                        return 4;
+                    case 0x5A:
+                        SetConsoleMode(hStdin, fdwOldMode & ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT));
+                        playSelectSound("menu_select.wav");
+                        return 0;
+                    case 0x58:
+                        SetConsoleMode(hStdin, fdwOldMode & ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT));
+                        return 7;
+                }
                 /* }
                 else {
                     switch (irInBuf[i].Event.KeyEvent.wVirtualKeyCode) {

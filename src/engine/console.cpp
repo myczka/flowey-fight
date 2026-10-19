@@ -13,26 +13,22 @@
 // #include <ctype.h>
 // #include "miniaudio.h"
 
-int get_rand(int first, int last)
-{
+int get_rand(int first, int last) {
     std::random_device rd;
     std::mt19937 gen(rd() ^ static_cast<unsigned>(std::time(0))); // random seed with time
     std::uniform_int_distribution<int> dist(first, last);
     return dist(gen);
 }
 
-void sleep(int delayMs)
-{
+void sleep(int delayMs) {
     std::this_thread::sleep_for(std::chrono::milliseconds(delayMs));
 }
 
-void clear()
-{
+void clear() {
     std::cout << "\033[2J\033[1;1H";
 }
 
-void triple_dot()
-{
+void triple_dot() {
     sleep(150);
     std::cout << ".";
     sleep(200);
@@ -45,8 +41,7 @@ void triple_dot()
     std::cout << "\b\b\b";
 }
 
-void triple_dot_slow()
-{
+void triple_dot_slow() {
     sleep(150);
     std::cout << ".";
     sleep(200);
@@ -58,52 +53,41 @@ void triple_dot_slow()
     clear();
 }
 
-void wrap(int i, std::string yeet, int &increm)
-{
-    if (i / 25 > increm && yeet[i - 1] == ' ')
-    {
+void wrap(int i, std::string yeet, int& increm) {
+    if (i / 25 > increm && yeet[i - 1] == ' ') {
         std::cout << std::endl;
-        if (yeet[0] == '*')
-        {
+        if (yeet[0] == '*') {
             std::cout << "  ";
         }
         increm = increm + 1;
     }
 }
 
-void write(std::string yeet, int time)
-{
+void write(std::string yeet, int time) {
     int increm = 0;
-    for (int i = 0; i < yeet.length(); ++i)
-    {
+    for (int i = 0; i < yeet.length(); ++i) {
         wrap(i, yeet, increm);
         std::cout << yeet[i];
         sleep(time);
     }
 }
 
-void backspace(int spaces)
-{
-    for (int i = 0; i < spaces; ++i)
-    {
+void backspace(int spaces) {
+    for (int i = 0; i < spaces; ++i) {
         std::cout << "\b";
     }
 }
 
-void backspace(int spaces, int sleeptime)
-{
-    for (int i = 0; i < spaces; ++i)
-    {
+void backspace(int spaces, int sleeptime) {
+    for (int i = 0; i < spaces; ++i) {
         std::cout << "\b";
         sleep(sleeptime);
     }
 }
 
-void backspaceWeird(int spaces, int sleeptime)
-{
+void backspaceWeird(int spaces, int sleeptime) {
     std::cout << "\b";
-    for (int i = 0; i < spaces; ++i)
-    {
+    for (int i = 0; i < spaces; ++i) {
         std::cout << " ";
         std::cout << "\b\b";
         sleep(sleeptime);
@@ -111,12 +95,10 @@ void backspaceWeird(int spaces, int sleeptime)
 }
 
 // Fix the buffering issue so spam doesn't spam
-void num_enter(char select)
-{
+void num_enter(char select) {
     char choice;
     std::cout << std::endl;
-    do
-    {
+    do {
         choice = _getch();
     } while (choice != select);
     clear();
