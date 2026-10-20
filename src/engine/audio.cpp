@@ -1,11 +1,7 @@
-#pragma once
-
-#include "miniaudio.h"
+#include "audio.h"
 #include <iostream>
-#include <vector>
-#include <string>
+#include <cstdlib>
 
-extern std::string audioDir;
 
 void seekTo(ma_sound& sound, float seconds) {
     ma_uint64 totalFrames;
@@ -36,7 +32,7 @@ void init(ma_engine& engine) {
     }
 }
 
-void init_sound(ma_engine& engine, ma_sound& sound, std::string file, bool bin = true) {
+void initSound(ma_engine& engine, ma_sound& sound, std::string file, bool bin) {
     // Initialize the sound using the provided engine and file path
     if (bin) {
         file = audioDir + file;
@@ -50,15 +46,7 @@ void init_sound(ma_engine& engine, ma_sound& sound, std::string file, bool bin =
     }
 }
 
-void uninit(ma_engine& engine) {
-    ma_engine_uninit(&engine);
-}
-
-void uninit(ma_sound& sound) {
-    ma_sound_uninit(&sound);
-}
-
-void playSound(ma_engine& engine, std::string file, bool bin = true) {
+void playSound(ma_engine& engine, std::string file, bool bin) {
     if (bin) {
         file = audioDir + file;
     } else {
@@ -66,6 +54,14 @@ void playSound(ma_engine& engine, std::string file, bool bin = true) {
     }
 
     ma_engine_play_sound(&engine, file.c_str(), NULL);
+}
+
+void uninit(ma_engine& engine) {
+    ma_engine_uninit(&engine);
+}
+
+void uninit(ma_sound& sound) {
+    ma_sound_uninit(&sound);
 }
 
 void volume(ma_sound& sound, float volume) {
@@ -123,7 +119,3 @@ void start(ma_engine& engine) {
 void stop(ma_engine& engine) {
     ma_engine_stop(&engine);
 }
-
-// void reset(ma_sound& sound) {
-//     ma_sound_set_at_end(&sound, false);
-// }

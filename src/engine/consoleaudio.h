@@ -1,8 +1,10 @@
 #pragma once
 
-#include "myaudio.h"
+#include "audio.h"
 #include "console.h"
 
+#include <iostream>
+#include <vector>
 #include <conio.h>
 
 void playRandSnd(ma_engine& engine, std::vector<std::string> soundsNames) {
