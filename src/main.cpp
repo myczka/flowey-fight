@@ -467,12 +467,12 @@ int main(int argc, char** argv) {
     init(voiceEng);
     init(effectEng);
     init(buffVoiceEng);
-    init_sound(effectEng, ok_sound, "menu_select.wav");
-    /*init_sound(mainEng, fight, "Enter Sanman_v1.wav");*/
-    init_sound(mainEng, fight, "AxeloFania_v1.wav");
-    init_sound(mainEng, good_song, "Your Best Friend.wav");
-    init_sound(mainEng, fallen_down, "Fallen Down Lofi dithered.wav");
-    init_sound(mainEng, genius_evil, "For the Damaged Coda.wav");
+    initSound(effectEng, ok_sound, "menu_select.wav");
+    /*initSound(mainEng, fight, "Enter Sanman_v1.wav");*/
+    initSound(mainEng, fight, "AxeloFania_v1.wav");
+    initSound(mainEng, good_song, "Your Best Friend.wav");
+    initSound(mainEng, fallen_down, "Fallen Down Lofi dithered.wav");
+    initSound(mainEng, genius_evil, "For the Damaged Coda.wav");
 
     pitch(ok_sound, .5);
     pitch(fallen_down, 0.75);
@@ -555,7 +555,7 @@ int main(int argc, char** argv) {
     } else if (name == "") {
         pause(good_song);
         uninit(good_song);
-        init_sound(mainEng, good_song, "Dm9_G7_CM7_Am7.wav");
+        initSound(mainEng, good_song, "Dm9_G7_CM7_Am7.wav");
         play(good_song);
         loop(good_song);
         pitch(good_song, 0.9f);
@@ -612,7 +612,7 @@ int main(int argc, char** argv) {
         exit(0);
     }
 
-    init_sound(mainEng, fight, "AxeloFania_v1.wav");
+    initSound(mainEng, fight, "AxeloFania_v1.wav");
     loop(fight);
     volume(fight, 0.7f);
     beginAt(fight, 14.7f);

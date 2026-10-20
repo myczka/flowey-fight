@@ -7,7 +7,8 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(floweyfight 
     ./src/main.cpp 
     ./src/engine/console.cpp 
-    ./third-party/miniaudio_impl.cpp
+    ./src/engine/audio.cpp
+    ./third-party/miniaudio_impl.cpp   
 )
 
 #target_include_directories(floweyfight PRIVATE ./lib/cppLibrary/)
