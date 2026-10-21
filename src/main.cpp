@@ -2,8 +2,10 @@
 This program presents an interactive command line turn-based RPG fight against Flowey.
 */
 
-#include "engine/consoleaudio.h"
-#include "engine/Menu.h"
+#include "engine/menu.h"
+#include "engine/speaker.h"
+#include "engine/console.h"
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -13,7 +15,10 @@ using namespace std;
 // TODO: (Feature Branch for Safety Sake) Modularize primary functions into their own header.
 
 /* Global Variables and Instances*/
+
 // From "myaudio.h"
+string audioDir = "./audio/";
+//
 
 enum Checkpoint {
     NOSTALGIA,
@@ -23,8 +28,6 @@ enum Checkpoint {
     DEATH,
     SPARE
 } loreState;
-
-string audioDir = "./audio/";
 
 int tens = 0;
 int hundreds = 8;
@@ -51,10 +54,11 @@ string space = "";
 string yeet = "";
 string name = "Debug";
 string last;
-string floweyText = "snd_floweytalk1.wav";
-string wolfeyText = "snd_floweytalk2.wav";
-string charaText = "char_text.wav";
-string menuText = "menu_text.wav";
+
+Voice floweyText{"snd_floweytalk1.wav", 50};
+Voice wolfeyText{"snd_floweytalk2.wav", 80};
+Voice charaText{"char_text.wav", 50};
+Voice menuText{"menu_text.wav", 30};
 
 // Vectors
 vector<string> mttTexts = {"snd_mtt1.wav", "snd_mtt2.wav", "snd_mtt3.wav", "snd_mtt4.wav", "snd_mtt5.wav", "snd_mtt6.wav", "snd_mtt7.wav", "snd_mtt8.wav", "snd_mtt9.wav"};
@@ -92,6 +96,9 @@ ma_sound good_song;
 ma_sound fight;
 ma_sound fallen_down;
 ma_sound genius_evil;
+
+Speaker* buffVoice = new Speaker(buffVoiceEng);
+Speaker* theVoice = new Speaker(voiceEng);
 
 // Root Menu
 // Function to get string of player variables for battle_menu. Needs to be a function since variables will change.
@@ -255,8 +262,9 @@ start_turn:
                     ok();
                     break;
                 default:
-                    type("* You used Firaga.");
+                    chara("* You used Firaga.\n");
                     sleep(100);
+                    // Fixed not doing newline - newline normally cuz ok but no ok after firaga for immersion
                     get_flowey(200);
                     ok();
                     type("* Flowey practices burning in he.");
@@ -672,12 +680,13 @@ std::string getBattleStr() {
 }
 
 void ok() {
-
-    num_enter('z', ok_sound);
+    waitForInput('z');
+    play(ok_sound);
+    clear();
 }
 
 void chara(std::string yeet, int time) {
-    write(yeet, time, buffVoiceEng, charaText);
+    buffVoice->write(yeet, charaText, time);
 }
 
 void chara(std::string yeet) {
@@ -685,7 +694,7 @@ void chara(std::string yeet) {
 }
 
 void type(std::string yeet, int time) {
-    write(yeet, time, voiceEng, menuText);
+    theVoice->write(yeet, menuText, time);
 }
 
 void type(std::string yeet) {
@@ -693,7 +702,8 @@ void type(std::string yeet) {
 }
 
 void flow(std::string yeet, int sleeptime) {
-    write(yeet, flowTime, voiceEng, floweyText);
+    theVoice->write(yeet, floweyText);
+    // I should get rid of this
     sleep(sleeptime);
 }
 
@@ -702,20 +712,15 @@ void flow(std::string yeet) {
 }
 
 void wolf(std::string yeet, int time) {
-    write(yeet, time, buffVoiceEng, wolfeyText);
+    buffVoice->write(yeet, wolfeyText, time);
 }
 
 void wolf(std::string yeet) {
     wolf(yeet, flowTime);
 }
 
-void wolfey(std::string yeet, int sleeptime) {
-    wolf(yeet, flowTime + 30);
-    sleep(sleeptime);
-}
-
 void mett(std::string yeet) {
-    write(yeet, 60, voiceEng, mttTexts);
+    theVoice->writeRand(yeet, 60, mttTexts);
 }
 
 void playEnemyHurt() {

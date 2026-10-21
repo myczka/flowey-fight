@@ -5,7 +5,7 @@
 #include <string>
 #include <iostream>
 #include <Windows.h>
-#include "miniaudio.h" // Include miniaudio for audio playback
+#include "audio.h" // Include miniaudio for audio playback
 #include <vector>
 
 class Menu {

@@ -1,16 +1,9 @@
 #include "console.h"
+#include "util.h"
 
 #include <string>
 #include <iostream>
 #include <conio.h>
-#include <chrono>
-#include <thread>
-#include <ctime>
-#include <random>
-
-void sleep(int delayMs) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(delayMs));
-}
 
 void clear() {
     std::cout << "\033[2J\033[1;1H";
@@ -82,21 +75,29 @@ void backspaceWeird(int spaces, int sleeptime) {
     }
 }
 
-int getRand(int first, int last) {
-    std::random_device rd;
-    std::mt19937 gen(rd() ^ static_cast<unsigned>(std::time(0))); // random seed with time
-    std::uniform_int_distribution<int> dist(first, last);
-    return dist(gen);
-}
-
-// Fix the buffering issue so spam doesn't spam
-void pressContinue(char select) {
-    char choice = 'a';
-
+void waitForInput(char select) {
+    char choice = '0';
+    
     std::cout << std::endl;
-    while (choice != select && _kbhit()) choice = _getch();
-    clear();
+    std::cout << ">";
+
+    // Clear buffer of spammed presses
+    while (_kbhit()) _getch();
+
+    // Get true key press
+    do {
+        choice = _getch();
+    } while (choice != select);
 }
+
+// void num_enter(char select, ma_engine& engine, std::string soundStr) {
+//     char choice;
+//     do {
+//         choice = _getch();
+//     } while (choice != select);
+//     playSound(engine, soundStr);
+//     clear();
+// }
 
 // void seekTo(ma_sound &sound, float seconds) {
 //     ma_uint64 totalFrames;

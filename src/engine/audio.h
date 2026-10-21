@@ -2,6 +2,7 @@
 
 #include "miniaudio.h"
 #include <string>
+#include <vector>
 
 extern std::string audioDir;
 
@@ -34,6 +35,8 @@ void begin(ma_sound& sound);
 void beginAt(ma_sound& sound, float seconds);
 
 void endAt(ma_sound& sound, float seconds);
+
+void waitTill(ma_sound& sound, float seconds);
 
 void play(ma_sound& sound);
 
