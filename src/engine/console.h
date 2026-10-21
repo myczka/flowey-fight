@@ -22,4 +22,8 @@ void backspaceWeird(int spaces, int sleeptime);
 
 int getRand(int first, int last);
 
-void pressContinue(char select);
+void waitForInput(char select);
+
+void pressContinue();
+
+// void num_enter(char select, ma_engine& engine, std::string soundStr);

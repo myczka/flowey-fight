@@ -1,4 +1,5 @@
 #include "audio.h"
+#include "util.h"
 #include <iostream>
 #include <cstdlib>
 
@@ -104,6 +105,12 @@ void endAt(ma_sound& sound, float seconds) {
         ma_engine_get_time_in_milliseconds(ma_sound_get_engine(&sound)) + ma_sound_get_time_in_milliseconds(&sound) + seconds);
 }
 
+void waitTill(ma_sound& sound, float seconds) {
+    while ((ma_sound_get_time_in_milliseconds(&sound) / 1000.0f) < seconds) {
+        sleep(1);
+    }
+}
+
 void play(ma_sound& sound) {
     ma_sound_start(&sound);
 }
@@ -119,3 +126,4 @@ void start(ma_engine& engine) {
 void stop(ma_engine& engine) {
     ma_engine_stop(&engine);
 }
+

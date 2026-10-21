@@ -8,6 +8,8 @@ add_executable(floweyfight
     ./src/main.cpp 
     ./src/engine/console.cpp 
     ./src/engine/audio.cpp
+    ./src/engine/speaker.cpp
+    ./src/engine/util.cpp
     ./third-party/miniaudio_impl.cpp   
 )
 
