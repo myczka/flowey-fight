@@ -18,6 +18,8 @@ void uninit(ma_sound& sound);
 
 void playSound(ma_engine& engine, std::string file, bool bin = true);
 
+void playRandSnd(ma_engine& engine, std::vector<std::string> soundVec);
+
 void volume(ma_sound& sound, float volume);
 
 void volume(ma_engine& engine, float volume);

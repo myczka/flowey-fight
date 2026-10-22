@@ -14,6 +14,7 @@ void Speaker::write(std::string mssg, Voice voice) {
             playSound(this->speakerEngine, voice.voiceFile);
         }
         std::cout << mssg[i];
+        std::cout << std::flush;
         sleep(voice.speed);
     }
 }
@@ -55,8 +56,4 @@ void Speaker::writeRand(std::string yeet, int time, std::vector<std::string> fil
         std::cout << yeet[i];
         sleep(time);
     }
-}
-
-void playRandSnd(ma_engine& engine, std::vector<std::string> soundVec) {
-    playSound(engine, soundVec.at(getRand(0, soundVec.size() - 1)));
 }

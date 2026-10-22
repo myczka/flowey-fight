@@ -36,6 +36,7 @@ TODO references below use current `main.cpp` line numbers. `TODO.md` is regenera
 | R6 | Menu tree | Plain-data `MenuNode` (label, children, `std::function` action on leaves) plus a navigator that owns `select()`, cursor index and back-stack. Reuse `Menu.h`'s `display` and `readKey` code. Remove the per-`Menu` `ma_engine` (Menu.h lines 60 and 84). Dynamic submenus (items, spells by mana) via a generator callback. Stop building menus as **file-scope globals** (`main.cpp` lines ~100-107): `battle_menu` calls `getBattleStr()` during static initialization, which only works because everything is in one file. Build menus inside the battle setup instead. |
 | R7 | `main` → `game` split | Create `src/game/`; replace globals and `goto` (see sections 5-6); replace `srand(time(0))`/`rand()` in `flowey_turn` with `getRand`; turn the command-line `argv` items into `ItemType` values; `main.cpp` becomes `Game g; g.run();`. |
 | R8 | Cleanup | Retire the stale subtree: delete `pullsubtree`/`pushsubtree`, `git remote remove cppLibrary`, remove `lib/`; update `README.md` (still describes the subtree); make `gettodos` scan recursively (it only reads `src/*.cpp`). |
+| R9 | Frame-based game loop | Replace blocking `sleep`/`_getch` flow with a fixed-timestep loop (input, update, render each frame). See section 4.1. Do it **before** the battle rewrite so `BattleManager` is written as per-frame states once, not twice. |
 
 ## 4. Engine completeness: what to build, adopt, or skip
 The engine is "complete enough" when each subsystem below has a small, replaceable interface. Layering follows the usual *Game Engine Architecture* stack (platform layer, core systems, resource manager, audio, game-specific systems) as summarized in [lecture notes based on Gregory's book](https://cs.utexas.edu/~theshark/courses/cs354p/lectures/cs354p-2.pdf).
@@ -53,6 +54,32 @@ The engine is "complete enough" when each subsystem below has a small, replaceab
 | Unit tests | **Adopt** doctest or Catch2 (header-only) | Test the damage formula, stat modifiers and parser without launching the game. I did not find a doctest-vs-Catch2 comparison; either works with CMake `FetchContent`. |
 | Dependency management | **FetchContent or vendored headers** | For a few small dependencies, [FetchContent is the lighter choice vs vcpkg/conan](https://discourse.cmake.org/t/fetchcontent-vs-vcpkg-conan/6578); keep miniaudio vendored in `third-party/`. |
 | ECS, scripting (Lua), GUI, networking | **Skip** | No problem here that needs them. EnTT/sol2 exist if you later outgrow plain structs. |
+| Game loop / timing | **Build** | See 4.1. This is the core of every engine and the main difference from your current blocking design. |
+
+### 4.1 Frame-based game loop (replaces blocking timing)
+Today the program *is* its timeline: `sleep`, `_getch` and typewriter loops block, so nothing else can run and errors in each `sleep` add up. Engines instead run one loop forever and let every system advance a little each frame (see the Game Loop and Update Method chapters of *Game Programming Patterns*, and Glenn Fiedler's "Fix Your Timestep").
+
+```
+const double dt = 1.0 / 60.0;                  // fixed step: 60 updates per second
+auto next = steady_clock::now();
+while (running) {
+    input.poll();                              // non-blocking: _kbhit/_getch only if a key waits
+    stateMachine.update(dt);                   // current state advances by dt
+    renderer.present();                        // draw only what changed
+    next += 16.667ms;                          // schedule against the clock, not "sleep 16"
+    std::this_thread::sleep_until(next);       // late frames don't accumulate drift
+}
+```
+
+What has to change, in order:
+1. **`input` module polls** instead of waiting: `keyPressed('z')` is true on the frame the key goes down. `waitForInput` becomes a state that checks this every frame. `Menu::readKey` (blocking `ReadConsoleInput`) becomes polling too.
+2. **Typewriter becomes an object with an update**: it keeps `elapsed` and `charIndex`; each `update(dt)` adds `dt`, and while `elapsed >= delay` it prints one character, plays its blip, and subtracts `delay`. `isDone()` says when the line finished. Pressing a key mid-line can now skip to the end, which the blocking version cannot do.
+3. **Waits become timers**: `sleep(500)` in a script becomes a "wait 0.5 s" step that counts down in `update`.
+4. **Scripted sequences become step lists** (`say`, `wait`, `playSound`, `clear`, `waitForConfirm`) run by a small sequencer, one step at a time. This is also the dialogue runner from section 4, so the intro and endings move there.
+5. **State machine** (Intro, NameEntry, Battle, Ending) owns which update runs each frame; `BattleManager` phases are states too.
+6. **Rendering:** the console has no frame buffer, so print only when something changes (new character, menu cursor moved), and flush `std::cout` after printing.
+
+Name entry (`getline`) is the one remaining blocking call; keep it as a blocking state at first, then replace it with per-key text input when the input module supports it.
 
 ## 5. Game systems: Player and Monster
 
@@ -121,12 +148,12 @@ Each module is one `.h`/`.cpp` pair listed in CMake; the `engine` code stays gam
 
 ## 7. Roadmap
 1. **Green build:** R1-R4 (Speaker, delete `consoleaudio`, `audioDir`, headers). Commit.
-2. **Engine:** R5 `AudioManager`, R6 menu tree, add `input`, state machine skeleton.
+2. **Engine:** R5 `AudioManager`, add polling `input`, R9 frame loop and state machine skeleton (port the typewriter first, then the intro as a step list), then R6 menu tree written as a per-frame navigator.
 3. **Data model:** `Stats`, `Combatant`, `Player`, `Monster`/`MonsterType`; replace globals. Add doctest with first stat tests.
 4. **Abilities:** `Ability`/`Effect` structs, `useAbility`, spell table, then status/modifier system; migrate Bolt/Blizzara/Firaga, then the Buster/Limit/Chaos loadouts.
 5. **Battle:** `BattleManager`, commands, weighted Flowey AI; remove `goto` and the last globals; slim `main.cpp`.
 6. **Content:** JSON loader and dialogue runner; port the intro, Chara and empty-name paths.
-7. **Later (optional):** attack-timing minigame with threads, non-blocking text (frame/timer-based) as the engine-style update model, FTXUI if you want a TUI.
+7. **Later (optional):** attack-timing minigame (with the frame loop it no longer needs threads; threads stay an optional exercise), FTXUI if you want a TUI.
 
 ## 8. Verification
 - Build after every step: `cmake --build build` (reconfigure after editing `CMakeLists.txt`); commit only green states.

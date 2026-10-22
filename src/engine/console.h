@@ -2,7 +2,9 @@
 
 #include <string>
 
-void sleep(int delayMs);
+// void sleep(int delayMs);
+
+// int getRand(int first, int last);
 
 void clear();
 
@@ -20,10 +22,8 @@ void backspace(int spaces, int sleeptime);
 
 void backspaceWeird(int spaces, int sleeptime);
 
-int getRand(int first, int last);
-
 void waitForInput(char select);
 
-void pressContinue();
+// void pressContinue();
 
 // void num_enter(char select, ma_engine& engine, std::string soundStr);
