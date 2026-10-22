@@ -57,6 +57,10 @@ void playSound(ma_engine& engine, std::string file, bool bin) {
     ma_engine_play_sound(&engine, file.c_str(), NULL);
 }
 
+void playRandSnd(ma_engine& engine, std::vector<std::string> soundVec) {
+    playSound(engine, soundVec.at(getRand(0, soundVec.size() - 1)));
+}
+
 void uninit(ma_engine& engine) {
     ma_engine_uninit(&engine);
 }

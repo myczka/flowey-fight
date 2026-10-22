@@ -5,10 +5,9 @@ This program presents an interactive command line turn-based RPG fight against F
 #include "engine/menu.h"
 #include "engine/speaker.h"
 #include "engine/console.h"
+#include "engine/util.h"
 
 #include <iostream>
-#include <string>
-#include <vector>
 
 using namespace std;
 
@@ -55,15 +54,15 @@ string yeet = "";
 string name = "Debug";
 string last;
 
-Voice floweyText{"snd_floweytalk1.wav", 50};
-Voice wolfeyText{"snd_floweytalk2.wav", 80};
-Voice charaText{"char_text.wav", 50};
-Voice menuText{"menu_text.wav", 30};
+Voice floweyVoice{"snd_floweytalk1.wav", 50};
+Voice wolfeyVoice{"snd_floweytalk2.wav", 80};
+Voice charaVoice{"char_text.wav", 50};
+Voice menuVoice{"menu_text.wav", 30};
 
 // Vectors
 vector<string> mttTexts = {"snd_mtt1.wav", "snd_mtt2.wav", "snd_mtt3.wav", "snd_mtt4.wav", "snd_mtt5.wav", "snd_mtt6.wav", "snd_mtt7.wav", "snd_mtt8.wav", "snd_mtt9.wav"};
 vector<string> lores = {"sadistically", "nightmare", "your GENOCIDE"};
-vector<string> serol = {"wildly", "friend", "his \"Hopes and Dreams\""};
+vector<string> serol = {"wildly", "friend", "his HOPES and DREAMS"};
 vector<string> items = {"Candy Bar", "Candy Bar", "Apple Pie"};
 vector<string> battleMenuVec = {"Attack", "Defend", "Items", "Mercy"};
 
@@ -97,8 +96,8 @@ ma_sound fight;
 ma_sound fallen_down;
 ma_sound genius_evil;
 
-Speaker* buffVoice = new Speaker(buffVoiceEng);
-Speaker* theVoice = new Speaker(voiceEng);
+Speaker buffVoice(buffVoiceEng);
+Speaker theVoice(voiceEng);
 
 // Root Menu
 // Function to get string of player variables for battle_menu. Needs to be a function since variables will change.
@@ -132,8 +131,6 @@ void wolf(std::string yeet, int time);
 
 void wolf(std::string yeet);
 
-void wolfey(std::string yeet, int sleeptime);
-
 void mett(std::string yeet);
 
 void playEnemyHurt();
@@ -156,7 +153,7 @@ void get_health(int remove) {
         remove = remove - damageMod;
     }
 
-    // Calculate the resulting player health and conduct conditional to choose between primary actions
+    // Calculate the resulting player health and choose between display types
     int afterHealth = health - remove;
     if (remove == 0) {
         type(to_string(health) + "/600", 70);
@@ -187,7 +184,7 @@ void get_health(int remove) {
 }
 
 // This function serves to print out floweys health decreasing over time and ends up reducing it by the value passed.
-// Make this a separate thread?
+// Make this a separate thread? (earthbound rolling health?)
 void get_flowey(int remove) {
     int goal = flowey - remove;
     int length;
@@ -197,6 +194,11 @@ void get_flowey(int remove) {
     type("Flowey's HP " + to_string(flowey) + "/800");
     sleep(400);
     backspace(4);
+
+    // It's not a bug it's a feature
+    if (flowey <= 0 && goal <= -990) {
+        goal = -1000;
+    }
 
     // Ticks down the tens place and hundreds place
     while (flowey != goal + 10) {
@@ -225,6 +227,10 @@ void get_flowey(int remove) {
 void player_turn() {
     battle_menu.setPrompt(getBattleStr());
     bMenuSize = battleMenuVec.size();
+
+    if (flowey == -1000) {
+        // Reset with awareness
+    }
 
 start_turn:
     clear();
@@ -284,6 +290,7 @@ start_turn:
 
     } else if (num == bMenuSize - 2) {
         num = item_menu.select();
+        int spot = num + 1;
 
         //SOLVES: Bad index accessor
         if (num == 7)
@@ -294,14 +301,21 @@ start_turn:
             type("* Gained 300 HP!");
             ok();
             health += 300;
+            damageMod += 75 * (1/spot);
             items.erase(items.begin() + num);
+            // if (spot == 1) {
+            //     chara("* The ripeness of the apple leaves you feeling a little safer.");
+            // }
         } else if (items.at(num) == "Candy Bar") {
             health += 100;
-            damageMod += 150;
+            // You get more defense if you eat the second candy bar first
+            damageMod += 75 * (spot);
             chara("* Ate a Candy Bar.");
             ok();
-            type("* Defense increased!\n");
-            type("* Gained 100 HP!");
+            type("* Defense increased! Gained 100 HP!\n");
+            if (spot == 2) {
+                chara("* You ate the second one first. For some reason, you feel a little tougher.");
+            }
             ok();
             items.erase(items.begin() + num);
         } else {
@@ -371,12 +385,12 @@ start_turn:
 void flowey_turn() {
     int random_number_three;
 
-    srand(static_cast<unsigned int>(time(0)));
+    // srand(static_cast<unsigned int>(time(0)));
 
     if (turn > 1) {
-        random_number_three = rand() % 80;
+        random_number_three = getRand(0, 80);
     } else {
-        random_number_three = rand() % 69;
+        random_number_three = getRand(0, 69);
     }
 
     clear();
@@ -394,7 +408,7 @@ void flowey_turn() {
         }
         sleep(700);
         get_health(200);
-    } else if (random_number_three <= 53) {
+    } else if (random_number_three <= 55) {
         sleep(80);
         type("* Flowey used Piercing Vines.\n");
         if (defend) {
@@ -519,8 +533,8 @@ int main(int argc, char** argv) {
     if (name == "Chara") {
         lore = true;
         lores = serol;
-        flowTime = 75;
-        typeTime = 40;
+        floweyVoice.speed = 75;
+        menuVoice.speed = 40;
 
         clear();
         pause(good_song);
@@ -639,7 +653,6 @@ fight_start:
         if (health < 1) {
             break;
         }
-    player_turn:
         player_turn();
     }
 
@@ -686,7 +699,7 @@ void ok() {
 }
 
 void chara(std::string yeet, int time) {
-    buffVoice->write(yeet, charaText, time);
+    buffVoice.write(yeet, charaVoice, time);
 }
 
 void chara(std::string yeet) {
@@ -694,7 +707,7 @@ void chara(std::string yeet) {
 }
 
 void type(std::string yeet, int time) {
-    theVoice->write(yeet, menuText, time);
+    theVoice.write(yeet, menuVoice, time);
 }
 
 void type(std::string yeet) {
@@ -702,7 +715,7 @@ void type(std::string yeet) {
 }
 
 void flow(std::string yeet, int sleeptime) {
-    theVoice->write(yeet, floweyText);
+    theVoice.write(yeet, floweyVoice);
     // I should get rid of this
     sleep(sleeptime);
 }
@@ -712,7 +725,7 @@ void flow(std::string yeet) {
 }
 
 void wolf(std::string yeet, int time) {
-    buffVoice->write(yeet, wolfeyText, time);
+    buffVoice.write(yeet, wolfeyVoice, time);
 }
 
 void wolf(std::string yeet) {
@@ -720,7 +733,7 @@ void wolf(std::string yeet) {
 }
 
 void mett(std::string yeet) {
-    theVoice->writeRand(yeet, 60, mttTexts);
+    theVoice.writeRand(yeet, 60, mttTexts);
 }
 
 void playEnemyHurt() {
