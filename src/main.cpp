@@ -314,7 +314,8 @@ start_turn:
             ok();
             type("* Defense increased! Gained 100 HP!\n");
             if (spot == 2) {
-                chara("* You ate the second one first. For some reason, you feel a little tougher.");
+                // Won't work until sleep parser is implemented
+                chara("* You ate the second one first.|3000|For some reason, you feel a little tougher.");
             }
             ok();
             items.erase(items.begin() + num);
@@ -494,7 +495,7 @@ int main(int argc, char** argv) {
     initSound(mainEng, fight, "AxeloFania_v1.wav");
     initSound(mainEng, good_song, "Your Best Friend.wav");
     initSound(mainEng, fallen_down, "Fallen Down Lofi dithered.wav");
-    initSound(mainEng, genius_evil, "For the Damaged Coda.wav");
+    initSound(mainEng, genius_evil, "Choir.wav");
 
     pitch(ok_sound, .5);
     pitch(fallen_down, 0.75);

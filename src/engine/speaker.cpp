@@ -7,12 +7,32 @@
 
 void Speaker::write(std::string mssg, Voice voice) {
     int increm = 0;
+    int parsed;
+    bool parsing = false;
+    std::string parsedStr = "";
     for (int i = 0; i < mssg.length(); ++i) {
         // begin(flowey_voice);
-        wrap(i, mssg, increm);
-        if (mssg[i] != ' ') {
+
+        if (mssg[i] == '|') {
+            if (parsing) {
+                parsing = false;
+                parsed = std::stoi(parsedStr);
+                parsedStr = "";
+                // Most important line
+                sleep(parsed);
+            } else {
+                parsing = true;
+            }
+            continue;
+        }
+        else if (parsing) {
+            parsedStr = parsedStr + mssg[i];
+            continue;
+        } 
+        else if (mssg[i] != ' ') {
             playSound(this->speakerEngine, voice.voiceFile);
         }
+        wrap(i, mssg, increm);
         std::cout << mssg[i];
         std::cout << std::flush;
         sleep(voice.speed);
