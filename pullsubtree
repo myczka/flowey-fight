@@ -1,3 +1,0 @@
-#!/bin/bash
-
-git subtree pull --prefix=lib/cppLibrary cppLibrary main --squash
