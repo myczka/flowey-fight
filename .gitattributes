@@ -1,0 +1,5 @@
+# Keep vendored code (e.g. the huge miniaudio.h) out of GitHub's language stats
+third-party/** linguist-vendored
+
+# .h is ambiguous to Linguist; every header in this repo is C++
+*.h linguist-language=C++

@@ -34,37 +34,13 @@ PATHS "C:/Program Files/Git/usr/bin" "C:/Program Files (x86)/Git/usr/bin")
     
 #     add_custom_target(run_todolist ALL
 #         COMMAND ${CMAKE_COMMAND} -E env "PATH=${GIT_BIN_DIR};$ENV{PATH}"
-#             ${SH_EXECUTABLE} mk-todolist
+#             ${SH_EXECUTABLE} -c "./gettodos src > docs/todolist.txt"
 #         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-#         COMMENT "Running <mk-todolist>"
+#         COMMENT "Writing docs/todolist.txt"
 #     )
 # else()
 #     message(WARNING "Shell not found - skipping todolist generation")
 # endif()
-
-#### Runs at reconfig fix plz
-# Read lines from text file
-# file(STRINGS "./todolist.txt" INPUT_LINES)
-
-# set(MD_CONTENT "")
-# foreach(line ${INPUT_LINES})
-#     # Check if line starts and ends with ===
-#     if(line MATCHES "^===(.*)===")
-#         # Extract the text between === markers
-#         string(REGEX REPLACE "^===(.*)===$" "\\1" header_text "${line}")
-#         # Trim whitespace
-#         string(STRIP "${header_text}" header_text)
-#         # Create header with italic formatting
-#         string(APPEND MD_CONTENT "# <i>${header_text}</i>\n")
-#     else()
-#         # Regular line - make it a bullet point
-#         string(APPEND MD_CONTENT "- ${line}\n")
-#     endif()
-# endforeach()
-
-# # Write to Markdown file
-# file(WRITE "./TODO.md" "${MD_CONTENT}")
-
 
 # add_custom_command(TARGET floweyfight POST_BUILD
 #     COMMAND ${CMAKE_COMMAND} -E copy_directory
