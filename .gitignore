@@ -1,4 +1,6 @@
 build/
-audio/
+audio/*
+!audio/AxeloFania_v1.wav
+!audio/Dm9_G7_CM7_Am7.wav
 .vscode/
 CLAUDE.local.md
