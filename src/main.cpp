@@ -270,7 +270,6 @@ start_turn:
                 default:
                     chara("* You used Firaga.\n");
                     sleep(100);
-                    // Fixed not doing newline - newline normally cuz ok but no ok after firaga for immersion
                     get_flowey(200);
                     ok();
                     type("* Flowey practices burning in he.");
@@ -314,8 +313,10 @@ start_turn:
             ok();
             type("* Defense increased! Gained 100 HP!\n");
             if (spot == 2) {
+                // TODO: Universal period, semicolon, dash, and comma pauses
+                chara("* You ate the second one first. For some reason, you feel a little tougher.");
                 // Won't work until sleep parser is implemented
-                chara("* You ate the second one first.|3000|For some reason, you feel a little tougher.");
+                // chara("* You ate the second one first.|3000|For some reason, you feel a little tougher.");
             }
             ok();
             items.erase(items.begin() + num);

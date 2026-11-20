@@ -7,20 +7,20 @@
 
 #include "audio.h"
 
-
+enum class Group {
+    Music,
+    Sfx,
+    Voice,
+    Count
+};
 
 class AudioManager {
     public:
         AudioManager();
 
-        enum class Group {
-            MUSIC,
-            SFX,
-            VOICE,
-            COUNT
-        };
-
     private:
-        std::unordered_map<std::string, std::unique_ptr<ma_sound>> soundMap;
-        std::array<ma_sound_group, static_cast<std::size_t>(Group::COUNT)> groupArray;
+        std::unordered_map<std::string, std::unique_ptr<ma_sound>> soundMap_;
+        std::array<ma_sound_group, static_cast<std::size_t>(Group::Count)> groupArray_;
+
+        ma_engine& audio_engine;
 };
