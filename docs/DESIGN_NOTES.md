@@ -1,12 +1,36 @@
 # FloweyFight: Design Notes
 
-Revision: 2026-11-19 (repository audit and learning-goal clarification; architecture revision originally 2026-10-25). Companion to [REFACTOR_PLAN.md](REFACTOR_PLAN.md).
+Revision: 2026-11-22 (reusable engine and boss-encounter direction clarified; repository baseline audited 2026-11-19; architecture revision originally 2026-10-25). Companion to [REFACTOR_PLAN.md](REFACTOR_PLAN.md).
 
 The plan is the source of truth for decisions and milestone order. This file explains how the pieces cooperate, why the boundaries exist, and which claims are supported by sources. The older notes mixed current choices, abandoned alternatives, and unverified conventions; this revision resolves those conflicts while retaining useful learning notes.
+
+[PROJECT_DIRECTION.md](PROJECT_DIRECTION.md) records the user's goals: a code-first JRPG engine/framework, reuse across games, Flowey as one encounter, primarily subtractive boss design, component learning, and deliberate Unity preparation. The choices below support those goals; they are not claims about a universal AAA architecture or ZUN's current implementation.
 
 Sections describing Game, AudioManager, and DialogueRunner explain the target design, not currently implemented systems. The inspected source/build baseline and missing-audio reminder live in REFACTOR_PLAN sections 1.1–1.1.1. The current source has a working compile, blocking Speaker/menu code, and an unused AudioManager header draft. Use `docs_old/` only for historical context; the duplicate `_gpt.md` downloads contained the same text as the active documents and were removed.
 
 ## 1. Read the architecture through one play session
+
+### Flowey is an encounter within the game
+
+The user explicitly wants a reusable engine and a game structured so this fight could be one boss encounter in a larger JRPG. The current release slice can remain a single complete battle, but its application flow, services, and session must not depend on Flowey being the only encounter. This is a project direction, not a claim that the current source already meets it.
+
+There are three useful boundaries. Audio, console output, menu navigation, and generic dialogue execution belong to the reusable engine. Combat rules, player/inventory state, encounter flow, and the game's data schema are shared JRPG systems in game code. Flowey's lore, music, dialogue, phases, and unique mechanics belong to encounter content or localized game-side behavior. A rule shared by this JRPG's battles does not have to move into the engine to be reusable.
+
+The shared JRPG framework is itself intended to transfer to a future JRPG, beyond merely another boss. Starting it in `src/game` is convenient during migration, not a claim that all of it is permanently tied to this game. Later library extraction should expose actual genre contracts and leave story/asset bindings with the client. First prove useful behavior and dependencies; folder moves alone do not prove reuse.
+
+Game/session owns what should survive the battle. A battle run owns its temporary state, receives an encounter setup and participants, and returns an outcome. Game flow decides what that outcome means for the story. For example, victory can request a boss-specific dialogue and return control to the surrounding flow; a later game can continue to another encounter without the battle loop restarting the process or recreating audio. Define persistence intentionally: an encounter ends, but the player and inventory do not automatically cease to exist with it.
+
+Names and story branches should be replaceable through authored content and game-side bindings. New mechanics may still need code, but special behavior should attach to the encounter through an explicit boundary rather than appear as character-name checks throughout the engine or shared resolver. No general scripting language, event bus, subclass per boss, or full campaign framework is implied.
+
+M4 first establishes a minimal encounter entry/outcome boundary; M5 loads that setup as content; M7 isolates the existing story; M8 proves the same flow supports another small encounter and different lore. Test reset/persistence between encounters, not just whether a second enemy definition can be loaded. An overworld and a full JRPG remain later work; the design should leave a clear place for them.
+
+### A shared vocabulary, subtractive encounters, and components
+
+The user intends bosses to primarily narrow a shared combat vocabulary: choose available modes/actions, restrict access, configure rules, and sequence phases. This is a game-design commitment, not a claim that it eliminates complexity. The shared coordinator must make mode transitions, input ownership, status timing, and action commit points clear. Unique presentation can distinguish encounters, but actual mechanical differences still need real rules.
+
+Specify the intended vocabulary in gameplay terms, then implement one useful slice at a time. A rich design does not require one mega-class or every hypothetical mode implemented up front. Timing/dodging examples from discussion are not approved modes. When content asks for an unsupported mechanic, explicitly decide whether to extend the vocabulary or attach localized behavior; do not claim everything can already be expressed as data.
+
+Use one concrete variation to learn a small component boundary during M4. For example, if attack-selection behavior truly differs, the coordinator can use an object that chooses a BattleAction. If two encounters only use different weighted attack lists, a shared chooser plus different data may suffice. The example is not a mandated interface or a reason to delay a working battle while designing a registry. A component's lifetime, input/output contract, and place in the update order must be explainable. Inheritance can implement alternative behaviors inside a composed design; composition is not a ban on virtual functions. The Component and Type Object discussions [N16, N4] explain these alternatives without prescribing our exact classes.
 
 ### Startup: create services, then load the game
 
@@ -198,6 +222,17 @@ Yarn Spinner's documented runner/presenter and command-handler boundaries provid
 
 ## 10. Transfer to Unity, Unreal, and another custom game
 
+Unity is an explicit learning target alongside this custom engine. At selected milestones, explain the relationship and, when requested, try a tiny separate Unity implementation. Completing this C++ engine is neither a prerequisite to opening Unity nor proof of editor proficiency. Never equate our explicit C++ ownership with Unity-managed object lifetimes, our fixed-step loop with all of Unity's updates, or XML with Unity's asset serialization. Unity documents distinct lifecycle callbacks and ScriptableObject data assets [N17, N6].
+
+| Checkpoint | Learning connection | Small Unity exercise when ready |
+|---|---|---|
+| M2 services | Explicit dependencies, ownership, initialization and cleanup | Supply an AudioSource reference to one component through the Inspector; explain which object the engine creates and which dependency the script receives. Do not reproduce miniaudio's manual lifetime API. |
+| M3 responsive dialogue | Progress across updates and input routing | Advance one timed line using Update or a coroutine; separate revealing from confirming the line. Explain the lifecycle/scheduling differences from our loop. |
+| M4 behavior component | Behavior contracts and composition | Build one action chooser as a plain C# object used by a MonoBehaviour adapter; distinguish that design from Unity's built-in Component type. |
+| M5 definitions | Shared authored definition versus separate runtime state | Create one ScriptableObject ability definition used by two actors with independent HP/MP. Our XML loader and Unity's importer/serialization remain different mechanisms. |
+| M6–M7 presentation | Authoritative rules and displayed results | Present one recorded action result through UI/audio without applying damage a second time; compare encounter state with scene/prefab organization. |
+| M8 reflection | Reuse evidence and knowledge gaps | Demonstrate one chosen exercise and list unpracticed editor, scene, prefab, serialization, importing, and lifecycle skills. No full Unity port or mandatory second project is implied. |
+
 | Concept learned here | Relationship to an established engine |
 |---|---|
 | Shared MonsterType/Ability definitions | Unity ScriptableObject assets are a way to author/share runtime data [N6]. Our XML loader is a different authoring path. |
@@ -231,7 +266,9 @@ Keep dependency versions/licenses explicit. CMake FetchContent makes content ava
 
 Housekeeping comes after its replacement works. Confirm stale subtree scripts/remotes before removing them. Do not reset history or create an old-history copy merely to finish a source refactor. Git-ignored audio needs documented setup or silent fallback, not an assumption that a fresh clone has every file.
 
-Stop when the completion target and XML-only extension test pass. An overworld, party targeting, ATB, replays, graphical presentation, and a second game each have separate acceptance criteria. They should reuse demonstrated seams and can still require localized changes.
+Stop when the completion target and XML-only extension test pass, including launching and leaving a second encounter through the same game flow and checking session/encounter lifetimes. This demonstrates the reusable boss-battle structure without requiring a complete JRPG. An overworld, party targeting, ATB, replays, graphical presentation, and a second game each have separate acceptance criteria. They should reuse demonstrated seams and can still require localized changes.
+
+The fine-tuned M8 also includes a tiny independent client using selected foundation services without this game's combat or content. That is a concrete foundation-reuse probe; it does not prove the entire JRPG framework already works in another game. Review the genre library boundary and record which Unity exercises were actually performed before choosing the next project scope.
 
 ### A small reading path when time permits
 
@@ -249,6 +286,8 @@ Use [Game Programming Patterns](https://gameprogrammingpatterns.com/contents.htm
 Read a short section when its question becomes concrete, then explain the answer using this game's code. The current engine layout can remain recognizable while these responsibilities become clearer.
 
 ## 12. Evidence, confidence, and primary sources
+
+The 2026-11-22 direction update records the user's code-first JRPG/reuse goals, subtractive encounter-design preference, component-learning goal, and Unity-learning target. The milestone exercises are project-specific teaching choices. Unity's execution-order and ScriptableObject documentation were checked online; the Component discussion is linked to the author's chapter source. No claim about ZUN's current code or universal AAA practice is needed. A fresh local Debug build succeeded; gameplay and audio were not exercised, and the six missing samples remain absent. See REFACTOR_PLAN section 1.1.2 for the current-state refresh.
 
 Sources were consulted online for this revision on 2026-10-25. Official API manuals establish documented library behavior; pattern chapters give worked architectural examples. Neither proves a universal AAA implementation. The owner table, stage names, input policy, numerical rules, initial timing limits, and milestone order are **project-specific design recommendations** derived from the goals.
 
@@ -273,5 +312,7 @@ The 2026-11-19 follow-up read the supplied planning-review chat, inspected the a
 | N13 | C++ working draft: [One-definition rule](https://eel.is/c++draft/basic.def.odr) | The distinction between problematic duplicate definitions and valid header definitions. This is a living draft, not a pinned C++17 edition. |
 | N14 | Unity: [Scenes](https://docs.unity.com/en-us/engine/6000.5/manual/working-with-scenes); Epic: [Game Mode and Game State](https://dev.epicgames.com/documentation/en-us/unreal-engine/game-mode-and-game-state-in-unreal-engine) | Scene contents versus game rules/match flow. |
 | N15 | [doctest repository](https://github.com/doctest/doctest); Catch2: [Migrating from v2 to v3](https://catch2-temp.readthedocs.io/en/latest/migrate-v2-to-v3.html) | Testing-framework integration/distribution facts. |
+| N16 | Robert Nystrom: [Component chapter source](https://github.com/munificent/game-programming-patterns/blob/master/book/component.markdown) | Composition as a way to separate behaviors/domains; not a requirement for ECS or one particular engine architecture. |
+| N17 | Unity 2022.3: [Execution order](https://docs.unity3d.com/2022.3/Documentation/Manual/ExecutionOrder.html), [Inspector variables/references](https://docs.unity3d.com/2022.3/Documentation/Manual/VariablesAndTheInspector.html) | Unity's lifecycle and editor-supplied references; conceptual comparisons do not replace actual Unity practice. |
 
 Historical code-review observations remain useful leads, but the original broken-call claim is superseded by the successful 2026-11-19 build. Global menu construction, per-menu engines, missing audio, and stale TODO generation were observed in this checkout. Wrapping/defense correctness and full gameplay paths still need focused checks. Subtree cleanup must be based on actual remaining files/configuration, not an assumption imported from old notes. See the plan's dated snapshot before reporting progress.

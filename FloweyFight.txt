@@ -1,0 +1,21 @@
+FloweyFight/
+  src/
+    main.cpp
+    engine/      Console.h/.cpp  Audio.h/.cpp  MenuTree.h/.cpp
+	Speaker.h/cpp
+	   void write(mssg, voice?)
+	   Voice {ma_sound&, int}
+    game/        
+	Combatant.h/.cpp/
+	   Voice voice  
+	   void say(mssg) {write(mssg, voice.sound, voice.speed)}
+	Battle.h/.cpp  
+	Spells.h/.cpp  ...
+  third_party/
+    miniaudio/   miniaudio.h  miniaudio_impl.cpp
+  assets/audio/  (your audio/)
+  CMakeLists.txt
+
+menu nodes will be initialized either as a node containing a vector of nodes underneath it, or will have an empty uninitialized vector and will instead be constructed with a lambda or std::function or a pointer to an action event  object. This is how leaf nodes will be identified. *constructor overload
+
+menutree contains the root menu node
